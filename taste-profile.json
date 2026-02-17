@@ -1,0 +1,2554 @@
+{
+  "topArtists": [
+    {
+      "name": "Geese",
+      "score": 1.105842147054405
+    },
+    {
+      "name": "Bill Laurance",
+      "score": 1.0757142857142856
+    },
+    {
+      "name": "Floating Points",
+      "score": 1.0135338659922581
+    },
+    {
+      "name": "Justin Bieber",
+      "score": 0.9977037360516406
+    },
+    {
+      "name": "Tame Impala",
+      "score": 0.8086585450096857
+    },
+    {
+      "name": "Dijon",
+      "score": 0.8007463067535997
+    },
+    {
+      "name": "Thelonious Monk",
+      "score": 0.7977677824068216
+    },
+    {
+      "name": "Cameron Winter",
+      "score": 0.7322196975043983
+    },
+    {
+      "name": "Four Tet",
+      "score": 0.7284128053750091
+    },
+    {
+      "name": "Leifur James",
+      "score": 0.669688118848304
+    },
+    {
+      "name": "Charanjit Singh",
+      "score": 0.6690213404443274
+    },
+    {
+      "name": "Hvalfugl",
+      "score": 0.6649428975885748
+    },
+    {
+      "name": "Masakatsu Takagi",
+      "score": 0.6632803178955561
+    },
+    {
+      "name": "Kurt Rosenwinkel",
+      "score": 0.6432087383487171
+    },
+    {
+      "name": "Mk.gee",
+      "score": 0.6394514325889447
+    },
+    {
+      "name": "Sven Wunder",
+      "score": 0.6355291787854941
+    },
+    {
+      "name": "Phi-Psonics",
+      "score": 0.6232588661823031
+    },
+    {
+      "name": "Carlos Santana",
+      "score": 0.6195389952724104
+    },
+    {
+      "name": "D'Angelo",
+      "score": 0.617842143982269
+    },
+    {
+      "name": "Ryuichi Sakamoto",
+      "score": 0.6175362468627447
+    },
+    {
+      "name": "Okonski",
+      "score": 0.6123372722509727
+    },
+    {
+      "name": "Julian Lage",
+      "score": 0.6033443420824829
+    },
+    {
+      "name": "Fila Brazillia",
+      "score": 0.6005831422943311
+    },
+    {
+      "name": "Blood Orange",
+      "score": 0.6004157810529172
+    },
+    {
+      "name": "DjRUM",
+      "score": 0.5810114839323666
+    },
+    {
+      "name": "Sam Gendel",
+      "score": 0.5801851777973834
+    },
+    {
+      "name": "Toro y Moi",
+      "score": 0.570424431995874
+    },
+    {
+      "name": "Larry June",
+      "score": 0.5697972572650584
+    },
+    {
+      "name": "Ravi Shankar",
+      "score": 0.5679305953159823
+    },
+    {
+      "name": "Alex G",
+      "score": 0.56415637849487
+    },
+    {
+      "name": "Kokoroko",
+      "score": 0.5607407493294039
+    },
+    {
+      "name": "Azymuth",
+      "score": 0.5601318346941921
+    },
+    {
+      "name": "Clipse",
+      "score": 0.5566748099798792
+    },
+    {
+      "name": "Jamie xx",
+      "score": 0.5546860170098061
+    },
+    {
+      "name": "Nabihah Iqbal",
+      "score": 0.5508734961512464
+    },
+    {
+      "name": "Abdullah Ibrahim",
+      "score": 0.5500477274655095
+    },
+    {
+      "name": "Tyler, The Creator",
+      "score": 0.5483728700508032
+    },
+    {
+      "name": "Olivia Dean",
+      "score": 0.5463566595761129
+    },
+    {
+      "name": "Jeff Parker",
+      "score": 0.5440662097324029
+    },
+    {
+      "name": "Aleksandir",
+      "score": 0.5427748710551648
+    },
+    {
+      "name": "Jesper Ryom",
+      "score": 0.5415359884018488
+    },
+    {
+      "name": "Steve Reich",
+      "score": 0.5413925920903967
+    },
+    {
+      "name": "Fred Hersch",
+      "score": 0.5401272876710881
+    },
+    {
+      "name": "Huw Marc Bennett",
+      "score": 0.5380897961961563
+    },
+    {
+      "name": "Pat Metheny",
+      "score": 0.5370012870940676
+    },
+    {
+      "name": "LCD Soundsystem",
+      "score": 0.5360499624793573
+    },
+    {
+      "name": "Masayoshi Takanaka",
+      "score": 0.5353918063916157
+    },
+    {
+      "name": "Jacques Greene",
+      "score": 0.5342619632706767
+    },
+    {
+      "name": "Jeremiah Chiu",
+      "score": 0.5334285939284766
+    },
+    {
+      "name": "Kanye West",
+      "score": 0.5327982721783497
+    },
+    {
+      "name": "Woo",
+      "score": 0.5321048244046923
+    },
+    {
+      "name": "Charles Mingus",
+      "score": 0.5315140920143656
+    },
+    {
+      "name": "Makaya McCraven",
+      "score": 0.5285813197147406
+    },
+    {
+      "name": "SHOLTO",
+      "score": 0.5264410298564403
+    },
+    {
+      "name": "Gianni Brezzo",
+      "score": 0.5246710616423128
+    },
+    {
+      "name": "Bill Evans",
+      "score": 0.5240353867824893
+    },
+    {
+      "name": "Ahmad Jamal Trio",
+      "score": 0.5230633358975487
+    },
+    {
+      "name": "Duval Timothy",
+      "score": 0.520387717701528
+    },
+    {
+      "name": "Youandewan",
+      "score": 0.5177316616805696
+    },
+    {
+      "name": "Mansur Brown",
+      "score": 0.510810774218331
+    },
+    {
+      "name": "Ryo Fukui",
+      "score": 0.5104152637645636
+    },
+    {
+      "name": "Roberto Musci",
+      "score": 0.5081991252249849
+    },
+    {
+      "name": "Jon Hopkins",
+      "score": 0.5073866089659015
+    },
+    {
+      "name": "Feya Faku",
+      "score": 0.5071525162177143
+    },
+    {
+      "name": "Marion Brown",
+      "score": 0.5066692908701067
+    },
+    {
+      "name": "Laurie Torres",
+      "score": 0.5055762500183172
+    },
+    {
+      "name": "SAULT",
+      "score": 0.5054115701756025
+    },
+    {
+      "name": "Mike Oldfield",
+      "score": 0.5050911439474545
+    },
+    {
+      "name": "Colleen",
+      "score": 0.5045497506721629
+    },
+    {
+      "name": "Simon Mavin",
+      "score": 0.4977323589332535
+    },
+    {
+      "name": "Saba",
+      "score": 0.49641916602312547
+    },
+    {
+      "name": "Carlos Niño",
+      "score": 0.4954693056477791
+    },
+    {
+      "name": "Chaos In The CBD",
+      "score": 0.49337336006522214
+    },
+    {
+      "name": "Blossom Dearie",
+      "score": 0.4908228712774756
+    },
+    {
+      "name": "Mahavishnu Orchestra",
+      "score": 0.4900301744848441
+    },
+    {
+      "name": "Mdou Moctar",
+      "score": 0.4885301957061471
+    },
+    {
+      "name": "Dauwd",
+      "score": 0.487441593479936
+    },
+    {
+      "name": "Lily Allen",
+      "score": 0.48353055306014814
+    },
+    {
+      "name": "Sam Wilkes",
+      "score": 0.4818272862423702
+    },
+    {
+      "name": "Dollar Brand (Abdullah Ibrahim)",
+      "score": 0.4814864006358065
+    },
+    {
+      "name": "Freddie Gibbs",
+      "score": 0.4814720438984495
+    },
+    {
+      "name": "Nightmares On Wax",
+      "score": 0.4805487552302788
+    },
+    {
+      "name": "Photay",
+      "score": 0.47976564498565744
+    },
+    {
+      "name": "HNNY",
+      "score": 0.47849035036410614
+    },
+    {
+      "name": "Annahstasia",
+      "score": 0.4773703516935032
+    },
+    {
+      "name": "Elkka",
+      "score": 0.4762626702808834
+    },
+    {
+      "name": "Bill Evans Trio",
+      "score": 0.4758733413662126
+    },
+    {
+      "name": "Bremer/McCoy",
+      "score": 0.47422825713858585
+    },
+    {
+      "name": "Tom Misch",
+      "score": 0.4737046809429234
+    },
+    {
+      "name": "Latarnik",
+      "score": 0.4735745803473139
+    },
+    {
+      "name": "Little Simz",
+      "score": 0.4733849073691213
+    },
+    {
+      "name": "Faye Webster",
+      "score": 0.47263109543964893
+    },
+    {
+      "name": "Jonny Nash",
+      "score": 0.47257725861278344
+    },
+    {
+      "name": "R.A.P. Ferreira",
+      "score": 0.47237884558223486
+    },
+    {
+      "name": "Tigran Hamasyan",
+      "score": 0.4716517667343546
+    },
+    {
+      "name": "JID",
+      "score": 0.4716194283137183
+    },
+    {
+      "name": "Barney Wilen",
+      "score": 0.470292566143939
+    },
+    {
+      "name": "SZA",
+      "score": 0.46926572484810186
+    },
+    {
+      "name": "Morelenbaum² / Sakamoto",
+      "score": 0.4679828903145947
+    },
+    {
+      "name": "Miles Davis",
+      "score": 0.4677694789764701
+    },
+    {
+      "name": "A Tribe Called Quest",
+      "score": 0.4665394997572882
+    },
+    {
+      "name": "Hailu Mergia",
+      "score": 0.4662537062767954
+    },
+    {
+      "name": "Sofiane Pamart",
+      "score": 0.46558480635344957
+    },
+    {
+      "name": "Robohands",
+      "score": 0.4655128269925479
+    },
+    {
+      "name": "Nina Simone",
+      "score": 0.46449309132035094
+    },
+    {
+      "name": "Jessica Pratt",
+      "score": 0.46404043660603295
+    },
+    {
+      "name": "Jeff Beck",
+      "score": 0.46284862317817865
+    },
+    {
+      "name": "Move 78",
+      "score": 0.4626987511182422
+    },
+    {
+      "name": "Mac DeMarco",
+      "score": 0.462166146682921
+    },
+    {
+      "name": "Akira Takahashi",
+      "score": 0.46160523906013906
+    },
+    {
+      "name": "Chihiro Yamanaka",
+      "score": 0.46146249234835224
+    },
+    {
+      "name": "Mr. Fingers",
+      "score": 0.46135457466927343
+    },
+    {
+      "name": "Uyama Hiroto",
+      "score": 0.4601757623114912
+    },
+    {
+      "name": "David Axelrod",
+      "score": 0.4601637337644704
+    },
+    {
+      "name": "Florence + The Machine",
+      "score": 0.4599562601146478
+    },
+    {
+      "name": "Jazzbois",
+      "score": 0.4591963247722882
+    },
+    {
+      "name": "Taylor Swift",
+      "score": 0.45878105769121424
+    },
+    {
+      "name": "Sabrina Carpenter",
+      "score": 0.4585370985862668
+    },
+    {
+      "name": "Egberto Gismonti",
+      "score": 0.45781530904889545
+    },
+    {
+      "name": "Zakir Hussain",
+      "score": 0.45640843274798876
+    },
+    {
+      "name": "Steven Feifke",
+      "score": 0.45591763720344824
+    },
+    {
+      "name": "Hayley Williams",
+      "score": 0.4555659897823026
+    },
+    {
+      "name": "Oscar Peterson Trio",
+      "score": 0.45411809994218716
+    },
+    {
+      "name": "Session Victim",
+      "score": 0.45373469859173376
+    },
+    {
+      "name": "Joey Bada$$",
+      "score": 0.4537019598333754
+    },
+    {
+      "name": "Kieran Hebden",
+      "score": 0.453094845714232
+    },
+    {
+      "name": "Chilly Gonzales",
+      "score": 0.4529211790009625
+    },
+    {
+      "name": "A Forest Mighty Black",
+      "score": 0.4528575137826538
+    },
+    {
+      "name": "Long Arm",
+      "score": 0.45267845677985985
+    },
+    {
+      "name": "Ebi Soda",
+      "score": 0.45176424356798367
+    },
+    {
+      "name": "Barry Can't Swim",
+      "score": 0.45167877089703784
+    },
+    {
+      "name": "Cochemea",
+      "score": 0.4505876874846268
+    },
+    {
+      "name": "Causa Sui",
+      "score": 0.45041702099144276
+    },
+    {
+      "name": "Altin Gün",
+      "score": 0.4503875241220497
+    },
+    {
+      "name": "Gregory Uhlmann",
+      "score": 0.44977351654865844
+    },
+    {
+      "name": "André 3000",
+      "score": 0.449686760649998
+    },
+    {
+      "name": "Moodymann",
+      "score": 0.44899505186241223
+    },
+    {
+      "name": "Herbert",
+      "score": 0.44820560018797984
+    },
+    {
+      "name": "chokecherry",
+      "score": 0.44711449190174046
+    },
+    {
+      "name": "Sylvie",
+      "score": 0.4464509292910285
+    },
+    {
+      "name": "Oneohtrix Point Never",
+      "score": 0.44615242860074483
+    },
+    {
+      "name": "Juando",
+      "score": 0.4452725610838168
+    },
+    {
+      "name": "DJ Koze",
+      "score": 0.444910054011031
+    },
+    {
+      "name": "Resavoir",
+      "score": 0.44485238801102067
+    },
+    {
+      "name": "Scrimshire",
+      "score": 0.44483184851269475
+    },
+    {
+      "name": "Leonard Cohen",
+      "score": 0.4444036463426514
+    },
+    {
+      "name": "Gerry Mulligan",
+      "score": 0.4443396948571248
+    },
+    {
+      "name": "Verses GT",
+      "score": 0.44402877296243837
+    },
+    {
+      "name": "Traditional",
+      "score": 0.44392504263963306
+    },
+    {
+      "name": "John McLaughlin",
+      "score": 0.4436410172083167
+    },
+    {
+      "name": "Löwenzahnhonig",
+      "score": 0.44331274053810266
+    },
+    {
+      "name": "Prequel",
+      "score": 0.44276744233358545
+    },
+    {
+      "name": "Kelly Lee Owens",
+      "score": 0.4424429507618378
+    },
+    {
+      "name": "St Germain",
+      "score": 0.4416691082438404
+    },
+    {
+      "name": "Hiromi",
+      "score": 0.4412120462362403
+    },
+    {
+      "name": "Bon Iver",
+      "score": 0.4410420673080385
+    },
+    {
+      "name": "Addison Rae",
+      "score": 0.4401540452774022
+    },
+    {
+      "name": "The Vernon Spring",
+      "score": 0.44013696271756125
+    },
+    {
+      "name": "Pat Metheny Group",
+      "score": 0.44004845578865964
+    },
+    {
+      "name": "cktrl",
+      "score": 0.43995592828904956
+    },
+    {
+      "name": "The Beatles",
+      "score": 0.4396863754111262
+    },
+    {
+      "name": "Plini",
+      "score": 0.4390122790395641
+    },
+    {
+      "name": "Cory Weeds",
+      "score": 0.4384727391699548
+    },
+    {
+      "name": "Mammal Hands",
+      "score": 0.4383727621769369
+    },
+    {
+      "name": "Yussef Dayes",
+      "score": 0.43832012732327996
+    },
+    {
+      "name": "Amaro Freitas",
+      "score": 0.4377785395084675
+    },
+    {
+      "name": "Hariprasad Chaurasia",
+      "score": 0.43517483765965
+    },
+    {
+      "name": "BADBADNOTGOOD",
+      "score": 0.4348458687115176
+    },
+    {
+      "name": "Greg Spero",
+      "score": 0.43414454413826375
+    },
+    {
+      "name": "Corinne Bailey Rae",
+      "score": 0.43413682862580716
+    },
+    {
+      "name": "Keith Jarrett",
+      "score": 0.43402374155425527
+    },
+    {
+      "name": "John Coltrane",
+      "score": 0.43400359549880063
+    },
+    {
+      "name": "Ryoji Ikeda",
+      "score": 0.433740079542663
+    },
+    {
+      "name": "Nala Sinephro",
+      "score": 0.43367044512920305
+    },
+    {
+      "name": "Men I Trust",
+      "score": 0.43334135251014155
+    },
+    {
+      "name": "GODTET",
+      "score": 0.43271504522136184
+    },
+    {
+      "name": "Ross from Friends",
+      "score": 0.43260952546661535
+    },
+    {
+      "name": "Billie Holiday",
+      "score": 0.43250904174571125
+    },
+    {
+      "name": "Mohinder Kaur Bhamra",
+      "score": 0.4313516717625868
+    },
+    {
+      "name": "Phil Cook",
+      "score": 0.43088988460036065
+    },
+    {
+      "name": "Hozier",
+      "score": 0.4302708592339345
+    },
+    {
+      "name": "Brad Mehldau",
+      "score": 0.4301524132051542
+    },
+    {
+      "name": "Talking Heads",
+      "score": 0.43013416227359225
+    },
+    {
+      "name": "Mei Semones",
+      "score": 0.42967152791749913
+    },
+    {
+      "name": "Vegyn",
+      "score": 0.42957553187161746
+    },
+    {
+      "name": "Laurence Guy",
+      "score": 0.4290287757989275
+    },
+    {
+      "name": "Maribou State",
+      "score": 0.42816080774694254
+    },
+    {
+      "name": "Surprise Chef",
+      "score": 0.4279130357022961
+    },
+    {
+      "name": "Hauschka",
+      "score": 0.4278068813594579
+    },
+    {
+      "name": "John Mayer",
+      "score": 0.42663807185902397
+    },
+    {
+      "name": "Keith Mansfield",
+      "score": 0.42545949820271756
+    },
+    {
+      "name": "Alice Coltrane",
+      "score": 0.42542604377631466
+    },
+    {
+      "name": "Felbm",
+      "score": 0.42510083138720356
+    },
+    {
+      "name": "Fiona Apple",
+      "score": 0.42470025190904237
+    },
+    {
+      "name": "Tomasz Stanko Quintet",
+      "score": 0.4246557087299484
+    },
+    {
+      "name": "Max Cooper",
+      "score": 0.42440827688945293
+    },
+    {
+      "name": "Kamaal Williams",
+      "score": 0.42319449952203414
+    },
+    {
+      "name": "Leon Vynehall",
+      "score": 0.42273703054369105
+    },
+    {
+      "name": "Beach House",
+      "score": 0.42251505824477475
+    },
+    {
+      "name": "Athletic Progression",
+      "score": 0.4224945167390872
+    },
+    {
+      "name": "Justin Timberlake",
+      "score": 0.4220254138784669
+    },
+    {
+      "name": "Yin Yin",
+      "score": 0.4219587979258998
+    },
+    {
+      "name": "Shiho Yabuki",
+      "score": 0.4217687578623663
+    },
+    {
+      "name": "FKJ",
+      "score": 0.42169682728907887
+    },
+    {
+      "name": "Earl Sweatshirt",
+      "score": 0.4209064017824463
+    },
+    {
+      "name": "Robert Ashley",
+      "score": 0.42018360350223855
+    },
+    {
+      "name": "Tanhai Collective",
+      "score": 0.4200127941372753
+    },
+    {
+      "name": "Lesiman",
+      "score": 0.4199745441240377
+    },
+    {
+      "name": "Roméo Poirier",
+      "score": 0.419828887087054
+    },
+    {
+      "name": "Alex Kassian",
+      "score": 0.4188745533500461
+    },
+    {
+      "name": "Astrid Sonne",
+      "score": 0.4187034873046293
+    },
+    {
+      "name": "Bill Withers",
+      "score": 0.4186893926588745
+    },
+    {
+      "name": "Thundercat",
+      "score": 0.41858602130468714
+    },
+    {
+      "name": "John Carroll Kirby",
+      "score": 0.41857975179078694
+    },
+    {
+      "name": "Clapper",
+      "score": 0.418040227194581
+    },
+    {
+      "name": "Vampire Weekend",
+      "score": 0.41738609935788784
+    },
+    {
+      "name": "Boris Blenn",
+      "score": 0.4172596520730927
+    },
+    {
+      "name": "Seb Wildblood",
+      "score": 0.41656990098671515
+    },
+    {
+      "name": "J. Cole",
+      "score": 0.4161375641754591
+    },
+    {
+      "name": "Brenda Warren",
+      "score": 0.4160782543208611
+    },
+    {
+      "name": "Kinji",
+      "score": 0.41586796320813424
+    },
+    {
+      "name": "Loving",
+      "score": 0.41551136397505634
+    },
+    {
+      "name": "Helado Negro",
+      "score": 0.41547428015162496
+    },
+    {
+      "name": "Spoon",
+      "score": 0.41498916779684764
+    },
+    {
+      "name": "Tony Allen",
+      "score": 0.41489992233343465
+    },
+    {
+      "name": "MF DOOM",
+      "score": 0.41443531674826173
+    },
+    {
+      "name": "Orions Belte",
+      "score": 0.41409818543152793
+    },
+    {
+      "name": "Svaneborg Kardyb",
+      "score": 0.41407984059035424
+    },
+    {
+      "name": "Fabiano do Nascimento",
+      "score": 0.41403092825784815
+    },
+    {
+      "name": "Hiroshi Yoshimura",
+      "score": 0.4137712845894912
+    },
+    {
+      "name": "Patrick Holland",
+      "score": 0.4136473436265541
+    },
+    {
+      "name": "MIKE",
+      "score": 0.4134627888967524
+    },
+    {
+      "name": "Broken Social Scene",
+      "score": 0.4132028348728386
+    },
+    {
+      "name": "Mulatu Astatke",
+      "score": 0.41278239822473833
+    },
+    {
+      "name": "Hiatus Kaiyote",
+      "score": 0.4126340533305878
+    },
+    {
+      "name": "Matthew Halsall",
+      "score": 0.4126075899336612
+    },
+    {
+      "name": "The Shanghai Restoration Project",
+      "score": 0.412124457710176
+    },
+    {
+      "name": "Milton Banana Trio",
+      "score": 0.411544468195411
+    },
+    {
+      "name": "Bubble Love",
+      "score": 0.411258838794909
+    },
+    {
+      "name": "James Blake",
+      "score": 0.41020987969087785
+    },
+    {
+      "name": "Karate Boogaloo",
+      "score": 0.4095876909844181
+    },
+    {
+      "name": "Against All Logic",
+      "score": 0.4092317637810894
+    },
+    {
+      "name": "Fontaines D.C.",
+      "score": 0.409197616902215
+    },
+    {
+      "name": "Mary Lattimore",
+      "score": 0.408766710816112
+    },
+    {
+      "name": "Bobby Hutcherson",
+      "score": 0.40872557535150583
+    },
+    {
+      "name": "Little Dragon",
+      "score": 0.40871009798272295
+    },
+    {
+      "name": "Joe Armon-Jones",
+      "score": 0.40793514495738425
+    },
+    {
+      "name": "Jordan Rakei",
+      "score": 0.40782677867662875
+    },
+    {
+      "name": "Dusty Springfield",
+      "score": 0.4076093147372869
+    },
+    {
+      "name": "Fazer",
+      "score": 0.40751996236005017
+    },
+    {
+      "name": "Kenny Beats",
+      "score": 0.4074837520880161
+    },
+    {
+      "name": "Sestetto Dino Piana & Oscar Valdambrini",
+      "score": 0.407077884783048
+    },
+    {
+      "name": "Brian Eno",
+      "score": 0.40695017425687763
+    },
+    {
+      "name": "Bobby Timmons",
+      "score": 0.4068703539670584
+    },
+    {
+      "name": "Caribou",
+      "score": 0.40671759235375377
+    },
+    {
+      "name": "Mick Jenkins",
+      "score": 0.4065313930711516
+    },
+    {
+      "name": "Chassol",
+      "score": 0.40643008013535836
+    },
+    {
+      "name": "Dustin O'Halloran",
+      "score": 0.4063987349223253
+    },
+    {
+      "name": "Venna",
+      "score": 0.4061705782914614
+    },
+    {
+      "name": "Ezra Feinberg",
+      "score": 0.40597480633782707
+    },
+    {
+      "name": "Arctic Monkeys",
+      "score": 0.40594754628017965
+    },
+    {
+      "name": "Kadhja Bonet",
+      "score": 0.4059137863857089
+    },
+    {
+      "name": "Amanda Whiting",
+      "score": 0.40590570527161346
+    },
+    {
+      "name": "Greg Foat",
+      "score": 0.4058461695451985
+    },
+    {
+      "name": "Stan Getz",
+      "score": 0.40575728523231824
+    },
+    {
+      "name": "Romare",
+      "score": 0.40574216185738765
+    },
+    {
+      "name": "WILLOW",
+      "score": 0.4056172463640376
+    },
+    {
+      "name": "Vince Staples",
+      "score": 0.40560894330557173
+    },
+    {
+      "name": "Alabama Shakes",
+      "score": 0.4055230331170762
+    },
+    {
+      "name": "Roc Marciano",
+      "score": 0.4052801956035971
+    },
+    {
+      "name": "SaffronKeira",
+      "score": 0.40523323111004456
+    },
+    {
+      "name": "Erykah Badu",
+      "score": 0.40493380589883454
+    },
+    {
+      "name": "Mariah the Scientist",
+      "score": 0.40445735897492807
+    },
+    {
+      "name": "Alabaster DePlume",
+      "score": 0.4043385971794423
+    },
+    {
+      "name": "Kamasi Washington",
+      "score": 0.4037681202894151
+    },
+    {
+      "name": "Hidden Spheres",
+      "score": 0.40371300128215426
+    },
+    {
+      "name": "Disclosure",
+      "score": 0.40313738711743935
+    },
+    {
+      "name": "George Benson",
+      "score": 0.4029973063563952
+    },
+    {
+      "name": "Bongeziwe Mabandla",
+      "score": 0.4027129266693968
+    },
+    {
+      "name": "Radiohead",
+      "score": 0.4023961954702734
+    },
+    {
+      "name": "Zenzele Mthembu-Salter",
+      "score": 0.4018453805997283
+    },
+    {
+      "name": "Silvana Estrada",
+      "score": 0.4011670054933021
+    },
+    {
+      "name": "Philip Glass",
+      "score": 0.4007307749242241
+    },
+    {
+      "name": "Chance the Rapper",
+      "score": 0.40045023182888073
+    },
+    {
+      "name": "Gorillaz",
+      "score": 0.40039264839252536
+    },
+    {
+      "name": "Marcin Wasilewski Trio",
+      "score": 0.4003124918260018
+    },
+    {
+      "name": "Chanel Beads",
+      "score": 0.4000903985617307
+    },
+    {
+      "name": "Sandro Brugnolini",
+      "score": 0.3999796747657045
+    },
+    {
+      "name": "Nick León",
+      "score": 0.39994192580737464
+    },
+    {
+      "name": "Father John Misty",
+      "score": 0.3997717672639489
+    },
+    {
+      "name": "The Weeknd",
+      "score": 0.39960844090660447
+    },
+    {
+      "name": "Mandar",
+      "score": 0.3991651843101372
+    },
+    {
+      "name": "Rupa",
+      "score": 0.3988403246930061
+    },
+    {
+      "name": "Ms. Lauryn Hill",
+      "score": 0.39877769117127726
+    },
+    {
+      "name": "Ballaké Sissoko",
+      "score": 0.39856609344070953
+    },
+    {
+      "name": "Andreas Vollenweider",
+      "score": 0.39853338199992405
+    },
+    {
+      "name": "Chet Baker",
+      "score": 0.39850486385022027
+    },
+    {
+      "name": "Minnie Riperton",
+      "score": 0.39818685902380735
+    },
+    {
+      "name": "Loure",
+      "score": 0.3980923873508606
+    },
+    {
+      "name": "Lane 8",
+      "score": 0.3980164356832052
+    },
+    {
+      "name": "Billy Cobham",
+      "score": 0.39791915789331106
+    },
+    {
+      "name": "N.E.R.D",
+      "score": 0.39791038973789283
+    },
+    {
+      "name": "Domenique Dumont",
+      "score": 0.3977265270241796
+    },
+    {
+      "name": "FloFilz",
+      "score": 0.39752683416970347
+    },
+    {
+      "name": "Auntie Flo",
+      "score": 0.39742359704691277
+    },
+    {
+      "name": "The RH Factor",
+      "score": 0.3974158908730514
+    },
+    {
+      "name": "Andrew Wasylyk",
+      "score": 0.39735403358932114
+    },
+    {
+      "name": "Pink Floyd",
+      "score": 0.39691766014846397
+    },
+    {
+      "name": "Sonny Rollins",
+      "score": 0.3964791661482801
+    },
+    {
+      "name": "Susumu Yokota",
+      "score": 0.39647057411702213
+    },
+    {
+      "name": "Devendra Banhart",
+      "score": 0.39646984396106344
+    },
+    {
+      "name": "BICEP",
+      "score": 0.39637448023408206
+    },
+    {
+      "name": "Haruomi Hosono",
+      "score": 0.3962148988279723
+    },
+    {
+      "name": "Sessa",
+      "score": 0.3959989856190958
+    },
+    {
+      "name": "Skalpel",
+      "score": 0.39582835386199483
+    },
+    {
+      "name": "Claude Debussy",
+      "score": 0.3957961395486706
+    },
+    {
+      "name": "Spliff Goldberg",
+      "score": 0.39579613265381997
+    },
+    {
+      "name": "Duke Hugh",
+      "score": 0.39562037322245625
+    },
+    {
+      "name": "Arushi Jain",
+      "score": 0.39544888344919116
+    },
+    {
+      "name": "Maxi Priest",
+      "score": 0.395402013563463
+    },
+    {
+      "name": "Jaubi",
+      "score": 0.3953598005820668
+    },
+    {
+      "name": "Shigeto",
+      "score": 0.3953028835024822
+    },
+    {
+      "name": "Herbie Hancock",
+      "score": 0.3952640279642576
+    },
+    {
+      "name": "Nubya Garcia",
+      "score": 0.3950787436021568
+    },
+    {
+      "name": "Thee Sacred Souls",
+      "score": 0.3950167670986035
+    },
+    {
+      "name": "Bob Dylan",
+      "score": 0.39489026020389684
+    },
+    {
+      "name": "Salamanda",
+      "score": 0.39484800559156685
+    },
+    {
+      "name": "HOMESHAKE",
+      "score": 0.3946222398156314
+    },
+    {
+      "name": "Majid Jordan",
+      "score": 0.3943361189606465
+    },
+    {
+      "name": "Stevie Wonder",
+      "score": 0.3942778210781188
+    },
+    {
+      "name": "Shinichiro Yokota",
+      "score": 0.39420056034887807
+    },
+    {
+      "name": "Snoop Dogg",
+      "score": 0.39418398181134906
+    },
+    {
+      "name": "Yves Tumor",
+      "score": 0.39411065568537473
+    },
+    {
+      "name": "ROSALÍA",
+      "score": 0.3940378168246069
+    },
+    {
+      "name": "John Scofield",
+      "score": 0.39374075872909264
+    },
+    {
+      "name": "Fela Kuti",
+      "score": 0.3937356933703157
+    },
+    {
+      "name": "Flume",
+      "score": 0.39372904010124576
+    },
+    {
+      "name": "Brent Faiyaz",
+      "score": 0.3934500356049216
+    },
+    {
+      "name": "Jesse Bru",
+      "score": 0.3934087565703236
+    },
+    {
+      "name": "Robert Glasper",
+      "score": 0.3933025357227232
+    },
+    {
+      "name": "Duke Ellington",
+      "score": 0.3932144609002226
+    },
+    {
+      "name": "Burial",
+      "score": 0.3932004189695286
+    },
+    {
+      "name": "The Internet",
+      "score": 0.393148568732423
+    },
+    {
+      "name": "Maurice Ravel",
+      "score": 0.3929689547304266
+    },
+    {
+      "name": "Isaiah Rashad",
+      "score": 0.39291326126864506
+    },
+    {
+      "name": "Big Thief",
+      "score": 0.3925583475210887
+    },
+    {
+      "name": "Jai Paul",
+      "score": 0.39243035221140254
+    },
+    {
+      "name": "Philippe Sarde",
+      "score": 0.3923550390592855
+    },
+    {
+      "name": "TRESOR",
+      "score": 0.3922747231257071
+    },
+    {
+      "name": "Daphni",
+      "score": 0.3922710949505509
+    },
+    {
+      "name": "Sampha",
+      "score": 0.39223073572394335
+    },
+    {
+      "name": "Clairo",
+      "score": 0.39202595830984033
+    },
+    {
+      "name": "The Offline",
+      "score": 0.3918606111503124
+    },
+    {
+      "name": "A Song For You",
+      "score": 0.39158862238273984
+    },
+    {
+      "name": "Real Estate",
+      "score": 0.39154689963395417
+    },
+    {
+      "name": "Bheki Mseleku",
+      "score": 0.39132292058438556
+    },
+    {
+      "name": "Quincy Jones",
+      "score": 0.3910702847026104
+    },
+    {
+      "name": "The Zenmenn",
+      "score": 0.3909113329098266
+    },
+    {
+      "name": "Poolside",
+      "score": 0.390806395028111
+    },
+    {
+      "name": "CASIOPEA",
+      "score": 0.39072281896475985
+    },
+    {
+      "name": "Ted Jasper",
+      "score": 0.39070791360675305
+    },
+    {
+      "name": "DOMi & JD BECK",
+      "score": 0.39068449110080317
+    },
+    {
+      "name": "Papa Bear & His Cubs",
+      "score": 0.39062145357573547
+    },
+    {
+      "name": "Alfa Mist",
+      "score": 0.39032560085721674
+    },
+    {
+      "name": "Jembaa Groove",
+      "score": 0.3902378300190819
+    },
+    {
+      "name": "Galcher Lustwerk",
+      "score": 0.3900510461578746
+    },
+    {
+      "name": "Kae Tempest",
+      "score": 0.39000931232496194
+    },
+    {
+      "name": "_BY.ALEXANDER",
+      "score": 0.38995531936027555
+    },
+    {
+      "name": "Eric Clapton",
+      "score": 0.3898671085608465
+    },
+    {
+      "name": "Carlos Niño & Friends",
+      "score": 0.3898366324481046
+    },
+    {
+      "name": "Barbara Lewis",
+      "score": 0.3898138612873519
+    },
+    {
+      "name": "Moomin",
+      "score": 0.38932130362844314
+    },
+    {
+      "name": "Wayne Shorter",
+      "score": 0.3892382579449343
+    },
+    {
+      "name": "Arrangement",
+      "score": 0.38918364025441093
+    },
+    {
+      "name": "H ZETTRIO",
+      "score": 0.389146144049088
+    },
+    {
+      "name": "Nilüfer Yanya",
+      "score": 0.38907477440244975
+    },
+    {
+      "name": "Romy",
+      "score": 0.3888890288708432
+    },
+    {
+      "name": "Solange",
+      "score": 0.3888688958196006
+    },
+    {
+      "name": "Ezra Collective",
+      "score": 0.38882959735267764
+    },
+    {
+      "name": "Terrace Martin",
+      "score": 0.3887423889248939
+    },
+    {
+      "name": "Jack J",
+      "score": 0.38850447512028485
+    },
+    {
+      "name": "Aaron Copland",
+      "score": 0.3884668136130989
+    },
+    {
+      "name": "Yussef Kamaal",
+      "score": 0.38827680558007427
+    },
+    {
+      "name": "Ciao Ciao Marigold",
+      "score": 0.38811248741155185
+    },
+    {
+      "name": "GoldFish",
+      "score": 0.3878660594264038
+    },
+    {
+      "name": "Wes Montgomery Trio",
+      "score": 0.3877942840308949
+    },
+    {
+      "name": "Daft Punk",
+      "score": 0.38765490733010866
+    },
+    {
+      "name": "落日飛車 Sunset Rollercoaster",
+      "score": 0.38756413749376073
+    },
+    {
+      "name": "Mount Kimbie",
+      "score": 0.3874521043743193
+    },
+    {
+      "name": "Nduduzo Makhathini",
+      "score": 0.38735173027281333
+    },
+    {
+      "name": "Air",
+      "score": 0.3872974207559321
+    },
+    {
+      "name": "The Doors",
+      "score": 0.38728022168184245
+    },
+    {
+      "name": "Butcher Brown",
+      "score": 0.38707487618440994
+    },
+    {
+      "name": "SML",
+      "score": 0.3870255667434157
+    },
+    {
+      "name": "Cherokee",
+      "score": 0.3869617002652886
+    },
+    {
+      "name": "Lord Echo",
+      "score": 0.38693365410738784
+    },
+    {
+      "name": "Tems",
+      "score": 0.38692469010329983
+    },
+    {
+      "name": "Smerz",
+      "score": 0.3868694351191104
+    },
+    {
+      "name": "ELIZA",
+      "score": 0.3868184788561244
+    },
+    {
+      "name": "Shinichi Atobe",
+      "score": 0.3866628830228101
+    },
+    {
+      "name": "Bombay Bicycle Club",
+      "score": 0.38664967301257963
+    },
+    {
+      "name": "L'Impératrice",
+      "score": 0.38664322074149826
+    },
+    {
+      "name": "Maggie Rogers",
+      "score": 0.38663576732064386
+    },
+    {
+      "name": "JPEGMAFIA",
+      "score": 0.38655880341908844
+    },
+    {
+      "name": "Frédéric Chopin",
+      "score": 0.3865471579290246
+    },
+    {
+      "name": "Drugdealer",
+      "score": 0.38654306195134175
+    },
+    {
+      "name": "Johnathan Blake",
+      "score": 0.38650790109303546
+    },
+    {
+      "name": "Brian Blade & The Fellowship Band",
+      "score": 0.3863997043034193
+    },
+    {
+      "name": "Johann Sebastian Bach",
+      "score": 0.38629661720908826
+    },
+    {
+      "name": "MAVI",
+      "score": 0.3861216766066994
+    },
+    {
+      "name": "Tortoise",
+      "score": 0.3859917558881436
+    },
+    {
+      "name": "Calvin Harris",
+      "score": 0.3857176318115005
+    },
+    {
+      "name": "Thom Yorke",
+      "score": 0.38567576173982954
+    },
+    {
+      "name": "Faithless",
+      "score": 0.3856574794759715
+    },
+    {
+      "name": "Bakar",
+      "score": 0.385576678982761
+    },
+    {
+      "name": "Snarky Puppy",
+      "score": 0.3854583032116363
+    },
+    {
+      "name": "Michael Jackson",
+      "score": 0.3852856068395034
+    },
+    {
+      "name": "Coldplay",
+      "score": 0.38527038885674836
+    },
+    {
+      "name": "Jake Minch",
+      "score": 0.38522438684943916
+    },
+    {
+      "name": "Ishmael Ensemble",
+      "score": 0.3851771668973053
+    },
+    {
+      "name": "Baluji Shrivastav",
+      "score": 0.385078692370798
+    },
+    {
+      "name": "Penny Goodwin",
+      "score": 0.3847867843796303
+    },
+    {
+      "name": "JAY-Z",
+      "score": 0.38476460835795023
+    },
+    {
+      "name": "Asha Bhosle",
+      "score": 0.3844118292212517
+    },
+    {
+      "name": "Saib",
+      "score": 0.38398483068267203
+    },
+    {
+      "name": "Lata Mangeshkar",
+      "score": 0.3839749335172752
+    },
+    {
+      "name": "Ella Fitzgerald",
+      "score": 0.38356208233951117
+    },
+    {
+      "name": "Poppy Ackroyd",
+      "score": 0.3831964813988581
+    },
+    {
+      "name": "Action Bronson",
+      "score": 0.38318844636680255
+    },
+    {
+      "name": "DJ Shadow",
+      "score": 0.3831393229122233
+    },
+    {
+      "name": "I Am An Instrument",
+      "score": 0.38282919348898137
+    },
+    {
+      "name": "Lupe Fiasco",
+      "score": 0.3828106671124988
+    },
+    {
+      "name": "Lil Wayne",
+      "score": 0.38264377611735617
+    },
+    {
+      "name": "Mark Lettieri",
+      "score": 0.38257187556721606
+    },
+    {
+      "name": "Me and My Sandcastle",
+      "score": 0.3824862501622363
+    },
+    {
+      "name": "Flying Lotus",
+      "score": 0.3822970085049554
+    },
+    {
+      "name": "Daryl Hall & John Oates",
+      "score": 0.382277997307011
+    },
+    {
+      "name": "Skrillex",
+      "score": 0.3822653413285789
+    },
+    {
+      "name": "Jnan Prakash Ghosh",
+      "score": 0.38224980801550135
+    },
+    {
+      "name": "Mac Ayres",
+      "score": 0.3822283961876503
+    },
+    {
+      "name": "Alif Tree",
+      "score": 0.38216090991291973
+    },
+    {
+      "name": "HOSH",
+      "score": 0.38209600213778777
+    },
+    {
+      "name": "sunflwr",
+      "score": 0.38206367253208706
+    },
+    {
+      "name": "McCoy Tyner",
+      "score": 0.3820531671361289
+    },
+    {
+      "name": "Noname",
+      "score": 0.3819963087064134
+    },
+    {
+      "name": "Shabaka",
+      "score": 0.3818498170433919
+    },
+    {
+      "name": "Rhye",
+      "score": 0.3818198868457255
+    },
+    {
+      "name": "Braxton Cook",
+      "score": 0.38179762930770966
+    },
+    {
+      "name": "Mall Grab",
+      "score": 0.38179386245005065
+    },
+    {
+      "name": "Winston Mankunku Ngozi",
+      "score": 0.381768177996697
+    },
+    {
+      "name": "Brittany Howard",
+      "score": 0.3817379992353
+    },
+    {
+      "name": "Blue Lab Beats",
+      "score": 0.38166891344248977
+    },
+    {
+      "name": "Jayda G",
+      "score": 0.3813694310651128
+    },
+    {
+      "name": "Bibio",
+      "score": 0.38126037207005614
+    },
+    {
+      "name": "The Strokes",
+      "score": 0.38121122374164856
+    },
+    {
+      "name": "Tell",
+      "score": 0.3812085326552478
+    },
+    {
+      "name": "Parquet Courts",
+      "score": 0.3811751201216085
+    },
+    {
+      "name": "GoGo Penguin",
+      "score": 0.38104558909303055
+    },
+    {
+      "name": "Space Ghost",
+      "score": 0.3808694229527537
+    },
+    {
+      "name": "Ebo Taylor",
+      "score": 0.38085565742702276
+    },
+    {
+      "name": "NxWorries",
+      "score": 0.38083113820343284
+    },
+    {
+      "name": "Jorge Ben Jor",
+      "score": 0.38081361393676594
+    },
+    {
+      "name": "Fleetwood Mac",
+      "score": 0.38080751565953685
+    },
+    {
+      "name": "The JuJu Exchange",
+      "score": 0.38074184002495903
+    },
+    {
+      "name": "Logic",
+      "score": 0.38050849593536773
+    },
+    {
+      "name": "Kyle Shepherd",
+      "score": 0.38049628803495283
+    },
+    {
+      "name": "Cage The Elephant",
+      "score": 0.3803961543804545
+    },
+    {
+      "name": "Jamie Cullum",
+      "score": 0.38025614160787446
+    },
+    {
+      "name": "Ludovico Einaudi",
+      "score": 0.38025568759504913
+    },
+    {
+      "name": "Anoushka Shankar",
+      "score": 0.3801840080292369
+    },
+    {
+      "name": "Mad Anthony",
+      "score": 0.3801379518231648
+    },
+    {
+      "name": "Alicia Keys",
+      "score": 0.3801305567903496
+    },
+    {
+      "name": "Yaeji",
+      "score": 0.38011279382220686
+    },
+    {
+      "name": "Whilk & Misky",
+      "score": 0.3800594992448001
+    },
+    {
+      "name": "Digable Planets",
+      "score": 0.3800502339619206
+    },
+    {
+      "name": "Vinyl Williams",
+      "score": 0.38001358049935846
+    },
+    {
+      "name": "Charles Lloyd",
+      "score": 0.3799605928737215
+    },
+    {
+      "name": "Wiki",
+      "score": 0.3798915864153324
+    },
+    {
+      "name": "Daniel Caesar",
+      "score": 0.379864358126364
+    },
+    {
+      "name": "Sam Cooke",
+      "score": 0.37982632167894403
+    },
+    {
+      "name": "Terry Callier",
+      "score": 0.3797301130272871
+    },
+    {
+      "name": "Stephan Micus",
+      "score": 0.3796815352259536
+    },
+    {
+      "name": "Harry Styles",
+      "score": 0.37965316439913505
+    },
+    {
+      "name": "Alan Hawkshaw",
+      "score": 0.3796230853948813
+    },
+    {
+      "name": "Al Di Meola",
+      "score": 0.3792334177597616
+    },
+    {
+      "name": "Phum Viphurit",
+      "score": 0.3791907537329442
+    },
+    {
+      "name": "Shakti",
+      "score": 0.3790914709379295
+    },
+    {
+      "name": "Ryo Kawasaki",
+      "score": 0.3788568103682426
+    },
+    {
+      "name": "Lone",
+      "score": 0.3787443148574231
+    },
+    {
+      "name": "Cleo Sol",
+      "score": 0.37872555911805994
+    },
+    {
+      "name": "Yuna",
+      "score": 0.3786712040427983
+    },
+    {
+      "name": "Esbjörn Svensson Trio",
+      "score": 0.3785517283247998
+    },
+    {
+      "name": "The Neighbourhood",
+      "score": 0.3784705573424614
+    },
+    {
+      "name": "Ahmad Jamal",
+      "score": 0.37842966057933103
+    },
+    {
+      "name": "Oracle Sisters",
+      "score": 0.37821237276414943
+    },
+    {
+      "name": "Logic1000",
+      "score": 0.3779617251303893
+    },
+    {
+      "name": "L'Eclair",
+      "score": 0.37795686818811125
+    },
+    {
+      "name": "Andrew Bird",
+      "score": 0.3779459240527311
+    },
+    {
+      "name": "The Whitest Boy Alive",
+      "score": 0.37791384301076103
+    },
+    {
+      "name": "h hunt",
+      "score": 0.3778770104566346
+    }
+  ],
+  "artistNames": [
+    "geese",
+    "bill laurance",
+    "floating points",
+    "justin bieber",
+    "tame impala",
+    "dijon",
+    "thelonious monk",
+    "cameron winter",
+    "four tet",
+    "leifur james",
+    "charanjit singh",
+    "hvalfugl",
+    "masakatsu takagi",
+    "kurt rosenwinkel",
+    "mk.gee",
+    "sven wunder",
+    "phi-psonics",
+    "carlos santana",
+    "d'angelo",
+    "ryuichi sakamoto",
+    "okonski",
+    "julian lage",
+    "fila brazillia",
+    "blood orange",
+    "djrum",
+    "sam gendel",
+    "toro y moi",
+    "larry june",
+    "ravi shankar",
+    "alex g",
+    "kokoroko",
+    "azymuth",
+    "clipse",
+    "jamie xx",
+    "nabihah iqbal",
+    "abdullah ibrahim",
+    "tyler, the creator",
+    "olivia dean",
+    "jeff parker",
+    "aleksandir",
+    "jesper ryom",
+    "steve reich",
+    "fred hersch",
+    "huw marc bennett",
+    "pat metheny",
+    "lcd soundsystem",
+    "masayoshi takanaka",
+    "jacques greene",
+    "jeremiah chiu",
+    "kanye west",
+    "woo",
+    "charles mingus",
+    "makaya mccraven",
+    "sholto",
+    "gianni brezzo",
+    "bill evans",
+    "ahmad jamal trio",
+    "duval timothy",
+    "youandewan",
+    "mansur brown",
+    "ryo fukui",
+    "roberto musci",
+    "jon hopkins",
+    "feya faku",
+    "marion brown",
+    "laurie torres",
+    "sault",
+    "mike oldfield",
+    "colleen",
+    "simon mavin",
+    "saba",
+    "carlos niño",
+    "chaos in the cbd",
+    "blossom dearie",
+    "mahavishnu orchestra",
+    "mdou moctar",
+    "dauwd",
+    "lily allen",
+    "sam wilkes",
+    "dollar brand (abdullah ibrahim)",
+    "freddie gibbs",
+    "nightmares on wax",
+    "photay",
+    "hnny",
+    "annahstasia",
+    "elkka",
+    "bill evans trio",
+    "bremer/mccoy",
+    "tom misch",
+    "latarnik",
+    "little simz",
+    "faye webster",
+    "jonny nash",
+    "r.a.p. ferreira",
+    "tigran hamasyan",
+    "jid",
+    "barney wilen",
+    "sza",
+    "morelenbaum² / sakamoto",
+    "miles davis",
+    "a tribe called quest",
+    "hailu mergia",
+    "sofiane pamart",
+    "robohands",
+    "nina simone",
+    "jessica pratt",
+    "jeff beck",
+    "move 78",
+    "mac demarco",
+    "akira takahashi",
+    "chihiro yamanaka",
+    "mr. fingers",
+    "uyama hiroto",
+    "david axelrod",
+    "florence + the machine",
+    "jazzbois",
+    "taylor swift",
+    "sabrina carpenter",
+    "egberto gismonti",
+    "zakir hussain",
+    "steven feifke",
+    "hayley williams",
+    "oscar peterson trio",
+    "session victim",
+    "joey bada$$",
+    "kieran hebden",
+    "chilly gonzales",
+    "a forest mighty black",
+    "long arm",
+    "ebi soda",
+    "barry can't swim",
+    "cochemea",
+    "causa sui",
+    "altin gün",
+    "gregory uhlmann",
+    "andré 3000",
+    "moodymann",
+    "herbert",
+    "chokecherry",
+    "sylvie",
+    "oneohtrix point never",
+    "juando",
+    "dj koze",
+    "resavoir",
+    "scrimshire",
+    "leonard cohen",
+    "gerry mulligan",
+    "verses gt",
+    "traditional",
+    "john mclaughlin",
+    "löwenzahnhonig",
+    "prequel",
+    "kelly lee owens",
+    "st germain",
+    "hiromi",
+    "bon iver",
+    "addison rae",
+    "the vernon spring",
+    "pat metheny group",
+    "cktrl",
+    "the beatles",
+    "plini",
+    "cory weeds",
+    "mammal hands",
+    "yussef dayes",
+    "amaro freitas",
+    "hariprasad chaurasia",
+    "badbadnotgood",
+    "greg spero",
+    "corinne bailey rae",
+    "keith jarrett",
+    "john coltrane",
+    "ryoji ikeda",
+    "nala sinephro",
+    "men i trust",
+    "godtet",
+    "ross from friends",
+    "billie holiday",
+    "mohinder kaur bhamra",
+    "phil cook",
+    "hozier",
+    "brad mehldau",
+    "talking heads",
+    "mei semones",
+    "vegyn",
+    "laurence guy",
+    "maribou state",
+    "surprise chef",
+    "hauschka",
+    "john mayer",
+    "keith mansfield",
+    "alice coltrane",
+    "felbm",
+    "fiona apple",
+    "tomasz stanko quintet",
+    "max cooper",
+    "kamaal williams",
+    "leon vynehall",
+    "beach house",
+    "athletic progression",
+    "justin timberlake",
+    "yin yin",
+    "shiho yabuki",
+    "fkj",
+    "earl sweatshirt",
+    "robert ashley",
+    "tanhai collective",
+    "lesiman",
+    "roméo poirier",
+    "alex kassian",
+    "astrid sonne",
+    "bill withers",
+    "thundercat",
+    "john carroll kirby",
+    "clapper",
+    "vampire weekend",
+    "boris blenn",
+    "seb wildblood",
+    "j. cole",
+    "brenda warren",
+    "kinji",
+    "loving",
+    "helado negro",
+    "spoon",
+    "tony allen",
+    "mf doom",
+    "orions belte",
+    "svaneborg kardyb",
+    "fabiano do nascimento",
+    "hiroshi yoshimura",
+    "patrick holland",
+    "mike",
+    "broken social scene",
+    "mulatu astatke",
+    "hiatus kaiyote",
+    "matthew halsall",
+    "the shanghai restoration project",
+    "milton banana trio",
+    "bubble love",
+    "james blake",
+    "karate boogaloo",
+    "against all logic",
+    "fontaines d.c.",
+    "mary lattimore",
+    "bobby hutcherson",
+    "little dragon",
+    "joe armon-jones",
+    "jordan rakei",
+    "dusty springfield",
+    "fazer",
+    "kenny beats",
+    "sestetto dino piana & oscar valdambrini",
+    "brian eno",
+    "bobby timmons",
+    "caribou",
+    "mick jenkins",
+    "chassol",
+    "dustin o'halloran",
+    "venna",
+    "ezra feinberg",
+    "arctic monkeys",
+    "kadhja bonet",
+    "amanda whiting",
+    "greg foat",
+    "stan getz",
+    "romare",
+    "willow",
+    "vince staples",
+    "alabama shakes",
+    "roc marciano",
+    "saffronkeira",
+    "erykah badu",
+    "mariah the scientist",
+    "alabaster deplume",
+    "kamasi washington",
+    "hidden spheres",
+    "disclosure",
+    "george benson",
+    "bongeziwe mabandla",
+    "radiohead",
+    "zenzele mthembu-salter",
+    "silvana estrada",
+    "philip glass",
+    "chance the rapper",
+    "gorillaz",
+    "marcin wasilewski trio",
+    "chanel beads",
+    "sandro brugnolini",
+    "nick león",
+    "father john misty",
+    "the weeknd",
+    "mandar",
+    "rupa",
+    "ms. lauryn hill",
+    "ballaké sissoko",
+    "andreas vollenweider",
+    "chet baker",
+    "minnie riperton",
+    "loure",
+    "lane 8",
+    "billy cobham",
+    "n.e.r.d",
+    "domenique dumont",
+    "flofilz",
+    "auntie flo",
+    "the rh factor",
+    "andrew wasylyk",
+    "pink floyd",
+    "sonny rollins",
+    "susumu yokota",
+    "devendra banhart",
+    "bicep",
+    "haruomi hosono",
+    "sessa",
+    "skalpel",
+    "claude debussy",
+    "spliff goldberg",
+    "duke hugh",
+    "arushi jain",
+    "maxi priest",
+    "jaubi",
+    "shigeto",
+    "herbie hancock",
+    "nubya garcia",
+    "thee sacred souls",
+    "bob dylan",
+    "salamanda",
+    "homeshake",
+    "majid jordan",
+    "stevie wonder",
+    "shinichiro yokota",
+    "snoop dogg",
+    "yves tumor",
+    "rosalía",
+    "john scofield",
+    "fela kuti",
+    "flume",
+    "brent faiyaz",
+    "jesse bru",
+    "robert glasper",
+    "duke ellington",
+    "burial",
+    "the internet",
+    "maurice ravel",
+    "isaiah rashad",
+    "big thief",
+    "jai paul",
+    "philippe sarde",
+    "tresor",
+    "daphni",
+    "sampha",
+    "clairo",
+    "the offline",
+    "a song for you",
+    "real estate",
+    "bheki mseleku",
+    "quincy jones",
+    "the zenmenn",
+    "poolside",
+    "casiopea",
+    "ted jasper",
+    "domi & jd beck",
+    "papa bear & his cubs",
+    "alfa mist",
+    "jembaa groove",
+    "galcher lustwerk",
+    "kae tempest",
+    "_by.alexander",
+    "eric clapton",
+    "carlos niño & friends",
+    "barbara lewis",
+    "moomin",
+    "wayne shorter",
+    "arrangement",
+    "h zettrio",
+    "nilüfer yanya",
+    "romy",
+    "solange",
+    "ezra collective",
+    "terrace martin",
+    "jack j",
+    "aaron copland",
+    "yussef kamaal",
+    "ciao ciao marigold",
+    "goldfish",
+    "wes montgomery trio",
+    "daft punk",
+    "落日飛車 sunset rollercoaster",
+    "mount kimbie",
+    "nduduzo makhathini",
+    "air",
+    "the doors",
+    "butcher brown",
+    "sml",
+    "cherokee",
+    "lord echo",
+    "tems",
+    "smerz",
+    "eliza",
+    "shinichi atobe",
+    "bombay bicycle club",
+    "l'impératrice",
+    "maggie rogers",
+    "jpegmafia",
+    "frédéric chopin",
+    "drugdealer",
+    "johnathan blake",
+    "brian blade & the fellowship band",
+    "johann sebastian bach",
+    "mavi",
+    "tortoise",
+    "calvin harris",
+    "thom yorke",
+    "faithless",
+    "bakar",
+    "snarky puppy",
+    "michael jackson",
+    "coldplay",
+    "jake minch",
+    "ishmael ensemble",
+    "baluji shrivastav",
+    "penny goodwin",
+    "jay-z",
+    "asha bhosle",
+    "saib",
+    "lata mangeshkar",
+    "ella fitzgerald",
+    "poppy ackroyd",
+    "action bronson",
+    "dj shadow",
+    "i am an instrument",
+    "lupe fiasco",
+    "lil wayne",
+    "mark lettieri",
+    "me and my sandcastle",
+    "flying lotus",
+    "daryl hall & john oates",
+    "skrillex",
+    "jnan prakash ghosh",
+    "mac ayres",
+    "alif tree",
+    "hosh",
+    "sunflwr",
+    "mccoy tyner",
+    "noname",
+    "shabaka",
+    "rhye",
+    "braxton cook",
+    "mall grab",
+    "winston mankunku ngozi",
+    "brittany howard",
+    "blue lab beats",
+    "jayda g",
+    "bibio",
+    "the strokes",
+    "tell",
+    "parquet courts",
+    "gogo penguin",
+    "space ghost",
+    "ebo taylor",
+    "nxworries",
+    "jorge ben jor",
+    "fleetwood mac",
+    "the juju exchange",
+    "logic",
+    "kyle shepherd",
+    "cage the elephant",
+    "jamie cullum",
+    "ludovico einaudi",
+    "anoushka shankar",
+    "mad anthony",
+    "alicia keys",
+    "yaeji",
+    "whilk & misky",
+    "digable planets",
+    "vinyl williams",
+    "charles lloyd",
+    "wiki",
+    "daniel caesar",
+    "sam cooke",
+    "terry callier",
+    "stephan micus",
+    "harry styles",
+    "alan hawkshaw",
+    "al di meola",
+    "phum viphurit",
+    "shakti",
+    "ryo kawasaki",
+    "lone",
+    "cleo sol",
+    "yuna",
+    "esbjörn svensson trio",
+    "the neighbourhood",
+    "ahmad jamal",
+    "oracle sisters",
+    "logic1000",
+    "l'eclair",
+    "andrew bird",
+    "the whitest boy alive",
+    "h hunt"
+  ],
+  "keywords": [
+    "idm",
+    "disco",
+    "house",
+    "baroque",
+    "jazz",
+    "fusion",
+    "ambient",
+    "nu jazz",
+    "indie",
+    "r&b",
+    "orchestral",
+    "improvisation",
+    "electronic",
+    "experimental",
+    "world music",
+    "classical",
+    "orchestra",
+    "chamber",
+    "contemporary",
+    "literary",
+    "poetry",
+    "reading",
+    "book",
+    "author",
+    "film",
+    "cinema",
+    "screening",
+    "documentary",
+    "art",
+    "gallery",
+    "exhibition",
+    "installation",
+    "philosophy",
+    "technology",
+    "ai",
+    "science",
+    "design",
+    "african",
+    "south african",
+    "indian",
+    "global",
+    "vinyl",
+    "dj set",
+    "live music",
+    "performance"
+  ],
+  "totalArtists": 7075
+}
