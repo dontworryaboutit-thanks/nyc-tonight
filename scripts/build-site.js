@@ -699,48 +699,41 @@ function buildSite(events, outputDir) {
     async function triggerRefresh() {
       const btn = document.getElementById('refresh-btn');
       const status = document.getElementById('refresh-status');
+      
+      // Check if a GitHub PAT is configured
       const token = localStorage.getItem('nyc-tonight-gh-token');
       
-      if (!token) {
-        const t = prompt('GitHub PAT (fine-grained, Actions:write scope):');
-        if (!t) return;
-        localStorage.setItem('nyc-tonight-gh-token', t);
-        return triggerRefresh();
-      }
-      
-      btn.disabled = true;
-      btn.textContent = '↻ Rebuilding...';
-      status.textContent = 'Triggering workflow...';
-      status.style.color = 'var(--teal)';
-      
-      try {
-        const res = await fetch('https://api.github.com/repos/dontworryaboutit-thanks/nyc-tonight/actions/workflows/daily.yml/dispatches', {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + token,
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({ ref: 'main' })
-        });
+      if (token) {
+        // Use PAT to trigger GitHub Actions
+        btn.disabled = true;
+        btn.textContent = '↻ Rebuilding...';
+        status.textContent = 'Triggering build...';
         
-        if (res.status === 204) {
-          status.textContent = 'Build triggered! Page will update in ~2 min. Reload then.';
-          status.style.color = 'var(--teal)';
-          setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Refresh data'; }, 120000);
-        } else if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('nyc-tonight-gh-token');
-          status.textContent = 'Bad token — cleared. Try again.';
+        try {
+          const res = await fetch('https://api.github.com/repos/dontworryaboutit-thanks/nyc-tonight/actions/workflows/daily.yml/dispatches', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' },
+            body: JSON.stringify({ ref: 'main' })
+          });
+          
+          if (res.status === 204) {
+            status.textContent = 'Build triggered — reload in ~2 min';
+            status.style.color = 'var(--teal)';
+          } else {
+            if (res.status === 401 || res.status === 403) localStorage.removeItem('nyc-tonight-gh-token');
+            status.textContent = 'Error ' + res.status + ' — try again';
+            status.style.color = '#e04040';
+          }
+        } catch (err) {
+          status.textContent = 'Network error';
           status.style.color = '#e04040';
-          btn.disabled = false; btn.textContent = '↻ Refresh data';
-        } else {
-          status.textContent = 'Error: HTTP ' + res.status;
-          status.style.color = '#e04040';
-          btn.disabled = false; btn.textContent = '↻ Refresh data';
         }
-      } catch (err) {
-        status.textContent = 'Network error: ' + err.message;
-        status.style.color = '#e04040';
-        btn.disabled = false; btn.textContent = '↻ Refresh data';
+        setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Refresh'; }, 10000);
+      } else {
+        // No PAT — just reload the page (data updates via cron)
+        status.textContent = 'Data updates automatically. Reloading page...';
+        status.style.color = 'var(--teal)';
+        setTimeout(() => location.reload(), 800);
       }
     }
   </script>
