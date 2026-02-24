@@ -622,7 +622,7 @@ function buildSite(events, outputDir) {
         const showImg = ev.image && ev.score >= 40;
         
         return '<div class="card ' + tierClass + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
-          (showImg ? '<img class="card-img" src="' + esc(ev.image) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
+          (showImg ? '<img class="card-img" src="' + esc(ev.image) + '" alt="" loading="lazy" onerror="this.remove()">' : '') +
           '<div class="card-head">' +
             '<div class="card-title">' + esc(ev.name) + '</div>' +
             '<div class="badge ' + badgeClass + '">' + ev.score + '</div>' +
