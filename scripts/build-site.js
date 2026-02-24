@@ -300,6 +300,15 @@ function buildSite(events, outputDir) {
       font-family: 'DM Mono', monospace;
     }
     footer a { color: var(--accent); text-decoration: none; }
+    .refresh-btn {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--accent); padding: 0.5rem 1.25rem; border-radius: 6px;
+      cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .refresh-status { margin-top: 0.5rem; font-size: 0.7rem; }
     
     /* === Responsive === */
     @media (max-width: 768px) {
@@ -369,7 +378,9 @@ function buildSite(events, outputDir) {
     <div class="events-list hidden" id="list"></div>
     
     <footer>
-      NYC Tonight · RA · ThoughtGallery · Film Forum · Taste-scored
+      <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()">↻ Refresh data</button>
+      <div class="refresh-status" id="refresh-status"></div>
+      <div style="margin-top:0.75rem">NYC Tonight · RA · ThoughtGallery · Film Forum · Taste-scored</div>
     </footer>
   </div>
   
@@ -561,6 +572,54 @@ function buildSite(events, outputDir) {
       const d = document.createElement('div');
       d.textContent = s || '';
       return d.innerHTML;
+    }
+    
+    async function triggerRefresh() {
+      const btn = document.getElementById('refresh-btn');
+      const status = document.getElementById('refresh-status');
+      const token = localStorage.getItem('nyc-tonight-gh-token');
+      
+      if (!token) {
+        const t = prompt('GitHub PAT (fine-grained, Actions:write scope):');
+        if (!t) return;
+        localStorage.setItem('nyc-tonight-gh-token', t);
+        return triggerRefresh();
+      }
+      
+      btn.disabled = true;
+      btn.textContent = '↻ Rebuilding...';
+      status.textContent = 'Triggering workflow...';
+      status.style.color = 'var(--teal)';
+      
+      try {
+        const res = await fetch('https://api.github.com/repos/dontworryaboutit-thanks/nyc-tonight/actions/workflows/daily.yml/dispatches', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({ ref: 'main' })
+        });
+        
+        if (res.status === 204) {
+          status.textContent = 'Build triggered! Page will update in ~2 min. Reload then.';
+          status.style.color = 'var(--teal)';
+          setTimeout(() => { btn.disabled = false; btn.textContent = '↻ Refresh data'; }, 120000);
+        } else if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('nyc-tonight-gh-token');
+          status.textContent = 'Bad token — cleared. Try again.';
+          status.style.color = '#e04040';
+          btn.disabled = false; btn.textContent = '↻ Refresh data';
+        } else {
+          status.textContent = 'Error: HTTP ' + res.status;
+          status.style.color = '#e04040';
+          btn.disabled = false; btn.textContent = '↻ Refresh data';
+        }
+      } catch (err) {
+        status.textContent = 'Network error: ' + err.message;
+        status.style.color = '#e04040';
+        btn.disabled = false; btn.textContent = '↻ Refresh data';
+      }
     }
   </script>
 </body>
