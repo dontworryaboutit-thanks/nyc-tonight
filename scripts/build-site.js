@@ -376,6 +376,9 @@ function buildSite(events, outputDir) {
   <script>
     const EVENTS = ${eventsJson};
     const PIN = '7429';
+    let currentFilter = 'all';
+    let currentSort = 'score';
+    let currentView = 'grid';
     
     // PIN gate
     const gate = document.getElementById('pin-gate');
@@ -401,10 +404,6 @@ function buildSite(events, outputDir) {
         }
       }
     });
-    
-    let currentFilter = 'all';
-    let currentSort = 'score';
-    let currentView = 'grid';
     
     document.querySelectorAll('[data-filter]').forEach(btn => {
       btn.addEventListener('click', () => {
