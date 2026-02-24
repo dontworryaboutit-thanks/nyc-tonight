@@ -58,7 +58,7 @@ async function scrape() {
           const title = $el.text().replace(/♪[^♪]*♪/g, '').replace(/<br\s*\/?>/g, ' ').trim();
           const url = $el.attr('href') || '';
           
-          if (title && title.length > 2 && title.length < 100) {
+          if (title && title.length > 2 && title.length < 100 && !/^(watch|trailer|buy|ticket)/i.test(title)) {
             // Avoid duplicates
             const exists = allEvents.some(e => 
               e.name.toLowerCase() === title.toLowerCase()

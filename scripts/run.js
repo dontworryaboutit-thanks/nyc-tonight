@@ -9,6 +9,7 @@ async function main() {
 
   // 1. Run all scrapers
   const scrapers = [
+    { name: 'songkick', mod: require('./scrapers/songkick') },
     { name: 'residentadvisor', mod: require('./scrapers/residentadvisor') },
     { name: 'thoughtgallery', mod: require('./scrapers/thoughtgallery') },
     { name: 'filmforum', mod: require('./scrapers/filmforum') },
@@ -56,24 +57,30 @@ async function main() {
   const { scoreAll } = require('./score-events');
   const scored = scoreAll(deduped, ROOT);
 
-  // 4. Save scored events as JSON (for debugging)
+  // 4. Filter out very low-scoring events
+  const MIN_SCORE = 10;
+  const filtered = scored.filter(ev => ev.score >= MIN_SCORE);
+  console.log(`\nFiltered: ${scored.length} → ${filtered.length} events (removed ${scored.length - filtered.length} below score ${MIN_SCORE})`);
+  const scoredFinal = filtered;
+
+  // 5. Save scored events as JSON (for debugging)
   const cachePath = path.join(ROOT, '.cache');
   fs.mkdirSync(cachePath, { recursive: true });
   fs.writeFileSync(
     path.join(cachePath, 'scored-events.json'),
-    JSON.stringify(scored, null, 2)
+    JSON.stringify(scoredFinal, null, 2)
   );
-  console.log(`\nSaved scored events to .cache/scored-events.json`);
+  console.log(`Saved scored events to .cache/scored-events.json`);
 
-  // 5. Build static site
+  // 6. Build static site
   const { buildSite } = require('./build-site');
-  buildSite(scored, path.join(ROOT, 'docs'));
+  buildSite(scoredFinal, path.join(ROOT, 'docs'));
 
-  console.log(`\n=== Done! ${scored.length} events scored and site generated ===`);
+  console.log(`\n=== Done! ${scoredFinal.length} events scored and site generated ===`);
   
   // Print top 5
   console.log('\nTop 5 picks:');
-  scored.slice(0, 5).forEach((ev, i) => {
+  scoredFinal.slice(0, 5).forEach((ev, i) => {
     console.log(`  ${i + 1}. [${ev.score}] ${ev.name} @ ${ev.venue} (${ev.date})`);
   });
 }
