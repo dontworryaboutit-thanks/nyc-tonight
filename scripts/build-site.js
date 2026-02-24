@@ -447,6 +447,7 @@ function buildSite(events, outputDir) {
     let currentFilter = 'all';
     let currentSort = 'score';
     let currentView = 'grid';
+    let lastFiltered = [];
     
     // PIN gate
     const gate = document.getElementById('pin-gate');
@@ -624,8 +625,6 @@ function buildSite(events, outputDir) {
         return (hour % 12 || 12) + ':' + m + (hour >= 12 ? 'p' : 'a');
       } catch { return t; }
     }
-    
-    let lastFiltered = [];
     
     function openModal(idx) {
       const ev = lastFiltered[idx];
