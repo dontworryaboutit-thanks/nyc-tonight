@@ -1,0 +1,8 @@
+node_modules/
+.env
+*.log
+.cache/
+data/spotify-liked-tracks.json
+data/spotify-liked.json
+data/goodreads.csv
+data/letterboxd/

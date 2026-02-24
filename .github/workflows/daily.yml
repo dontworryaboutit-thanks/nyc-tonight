@@ -1,0 +1,33 @@
+name: NYC Tonight Daily Build
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # 10:00 UTC = 6:00 AM ET
+  workflow_dispatch:       # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Build site
+        run: node scripts/run.js
+
+      - name: Commit and push
+        run: |
+          git config user.name "NYC Tonight Bot"
+          git config user.email "bot@nyc-tonight.local"
+          git add docs/
+          git diff --cached --quiet || git commit -m "chore: daily update $(date -u +%Y-%m-%d)"
+          git push
