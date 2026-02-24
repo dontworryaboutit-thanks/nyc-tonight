@@ -1,0 +1,133 @@
+{
+  "_meta": {
+    "description": "Distilled taste profile — patterns and preferences, no raw personal data",
+    "generated": "2026-02-24",
+    "sources": ["spotify-liked-tracks", "goodreads-ratings", "letterboxd-ratings"]
+  },
+  
+  "musicTaste": {
+    "topGenreClusters": [
+      { "cluster": "electronic-experimental", "keywords": ["electronic", "ambient", "idm", "experimental", "glitch", "modular"], "weight": 1.0 },
+      { "cluster": "jazz-and-improvisation", "keywords": ["jazz", "nu jazz", "fusion", "improvisation", "bebop", "free jazz", "modal"], "weight": 0.95 },
+      { "cluster": "indie-art-rock", "keywords": ["indie", "art rock", "post-punk", "shoegaze", "noise pop", "math rock"], "weight": 0.85 },
+      { "cluster": "hip-hop-experimental", "keywords": ["hip hop", "abstract hip hop", "rap", "boom bap", "lo-fi hip hop"], "weight": 0.8 },
+      { "cluster": "world-and-roots", "keywords": ["world music", "afrobeat", "desert blues", "tuareg", "raga", "indian classical", "brazilian", "cumbia", "dub"], "weight": 0.85 },
+      { "cluster": "classical-contemporary", "keywords": ["classical", "contemporary classical", "orchestral", "chamber", "minimalist", "baroque", "opera"], "weight": 0.75 },
+      { "cluster": "soul-rnb", "keywords": ["r&b", "soul", "neo-soul", "funk"], "weight": 0.7 },
+      { "cluster": "ambient-drone", "keywords": ["ambient", "drone", "soundscape", "new age", "field recording"], "weight": 0.8 }
+    ],
+    "aestheticSignals": [
+      "genre-fluid artists who cross boundaries",
+      "rhythmically complex but emotionally accessible",
+      "analog/warm production aesthetics",
+      "small-venue intimacy over arena spectacle",
+      "artist-led curation (DJ sets, residencies, collaborations)",
+      "cross-cultural musical dialogue"
+    ]
+  },
+  
+  "literaryTaste": {
+    "strongAffinities": [
+      "Latin American magical realism (García Márquez, Bolaño, Allende)",
+      "philosophical fiction (Kundera, Murdoch, Huxley, Le Guin)",
+      "speculative/sci-fi with ideas (Philip K. Dick, Liu Cixin, Le Guin, Wells)",
+      "literary nonfiction and longform journalism (Caro, Kolker, Saunders)",
+      "transgressive/bold voice (Gaitskill, Carter, Thompson, Nabokov)",
+      "existential/identity narratives (Baldwin, Ibsen, Szerb)",
+      "consciousness and perception (Huxley, Baker, Dick)"
+    ],
+    "thematicKeywords": [
+      "consciousness", "identity", "perception", "memory", "exile",
+      "revolution", "utopia", "dystopia", "surrealism", "magical realism",
+      "journalism", "investigation", "power", "technology", "AI",
+      "translation", "migration", "postcolonial", "queer identity",
+      "philosophy", "existentialism", "phenomenology",
+      "craft of writing", "metafiction", "experimental narrative"
+    ]
+  },
+  
+  "filmTaste": {
+    "strongAffinities": [
+      "visually striking / cinematographically ambitious (Blade Runner 2049, 2001, The Lighthouse)",
+      "emotionally intelligent drama (Her, Before Sunset, C'mon C'mon, Yi Yi)",
+      "cross-cultural cinema (RRR, Portrait of a Lady on Fire, Spring Summer, I'm Still Here)",
+      "music documentaries (Summer of Soul, Stop Making Sense, Jodorowsky's Dune)",
+      "anime with depth (Perfect Blue, Akira, The Boy and the Heron)",
+      "classic cinema (Sunset Boulevard, Singin' in the Rain)",
+      "auteur-driven genre films (Knives Out, Everything Everywhere, Poor Things)",
+      "essay films / meta-cinema (F for Fake, Mishima)"
+    ],
+    "favoredDirectors": [
+      "Denis Villeneuve", "Spike Lee", "Spike Jonze", "Edward Yang",
+      "Céline Sciamma", "Yorgos Lanthimos", "Robert Eggers", "Satoshi Kon",
+      "Hayao Miyazaki", "Orson Welles", "Paul Schrader", "Martin Scorsese",
+      "Bong Joon-ho", "Jonathan Demme", "S.S. Rajamouli", "Walter Salles"
+    ],
+    "thematicKeywords": [
+      "visual ambition", "emotional intelligence", "cross-cultural",
+      "music documentary", "animation", "classic cinema", "auteur",
+      "essay film", "sci-fi", "psychological thriller",
+      "social commentary", "identity", "love", "obsession"
+    ]
+  },
+  
+  "crossDisciplinarySignals": {
+    "description": "Patterns that emerge across all three domains — the taste throughline",
+    "coreAesthetic": [
+      "formally inventive but emotionally sincere",
+      "cross-cultural and cross-disciplinary curiosity",
+      "depth over breadth — prefers one extraordinary thing over ten decent ones",
+      "the tension between tradition and experimentation",
+      "small/independent/curated over mainstream/mass",
+      "works that reward repeated engagement"
+    ],
+    "eventScoringHints": {
+      "strongPositive": [
+        "anything at an artist-run or curator-driven venue",
+        "cross-genre or cross-medium events (music + film, literature + music)",
+        "retrospectives and deep dives (not just greatest hits)",
+        "talks about consciousness, AI, perception, identity, media, journalism",
+        "world music / non-Western traditions performed authentically",
+        "experimental or avant-garde work that's still accessible",
+        "documentary screenings about music or cultural movements",
+        "events featuring Latin American, Japanese, Korean, West African, South Asian culture",
+        "free jazz, improvisation, or live electronic music in intimate settings"
+      ],
+      "mildPositive": [
+        "indie film screenings at arthouse theaters",
+        "book talks by literary fiction or nonfiction authors",
+        "panel discussions on technology, media, or cultural criticism",
+        "classic film retrospectives",
+        "genre-blending performances"
+      ],
+      "neutral": [
+        "mainstream concerts at large venues",
+        "general comedy shows",
+        "standard art gallery openings"
+      ],
+      "weakNegative": [
+        "pure pop/commercial music at stadium venues",
+        "corporate-sponsored cultural events",
+        "blockbuster film screenings at chain theaters"
+      ]
+    }
+  },
+
+  "venueAffinities": {
+    "tier1_perfect": {
+      "music": ["Village Vanguard", "Le Poisson Rouge", "National Sawdust", "Roulette", "Public Records", "Nublu", "Smalls", "Barbès", "55 Bar", "Dizzy's Club", "The Stone", "Issue Project Room", "Pioneer Works"],
+      "film": ["Film Forum", "Metrograph", "Anthology Film Archives", "Film at Lincoln Center", "Museum of the Moving Image", "BAM Rose Cinemas", "MoMA"],
+      "cultural": ["The Shed", "Park Avenue Armory", "Pioneer Works", "New Museum", "Dia:Beacon", "Artists Space"]
+    },
+    "tier2_great": {
+      "music": ["Brooklyn Steel", "Baby's All Right", "Elsewhere", "Sultan Room", "Blue Note", "Market Hotel", "Rough Trade", "Bowery Ballroom", "Music Hall of Williamsburg", "Joe's Pub", "Zankel Hall", "Trans-Pecos", "Knockdown Center"],
+      "film": ["IFC Center", "Angelika", "Nitehawk Cinema", "SVA Theatre"],
+      "cultural": ["92nd Street Y", "Brooklyn Museum", "Whitney Museum", "Metropolitan Museum", "The Kitchen", "Swiss Institute"]
+    },
+    "tier3_solid": {
+      "music": ["Carnegie Hall", "David Geffen Hall", "Beacon Theatre", "Brooklyn Mirage", "Webster Hall", "Irving Plaza", "Terminal 5", "TV Eye", "Racket"],
+      "film": ["Village East", "Quad Cinema"],
+      "cultural": ["Town Hall", "BAM Howard Gilman", "NYPL Main Branch"]
+    }
+  }
+}

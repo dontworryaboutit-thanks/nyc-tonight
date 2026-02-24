@@ -28,22 +28,37 @@ const VENUE_TIERS = {
   ]
 };
 
-// Cultural keywords from books/film taste — for scoring non-music events
+// Load taste DNA for cultural + cross-disciplinary scoring
+function loadTasteDNA(rootDir) {
+  try {
+    const dnaPath = path.join(rootDir, 'taste-dna.json');
+    return JSON.parse(fs.readFileSync(dnaPath, 'utf-8'));
+  } catch {
+    return null;
+  }
+}
+
+// Cultural keywords — enriched from taste-dna.json if available, with fallbacks
 const CULTURAL_KEYWORDS = {
-  // From Goodreads (Bolaño, Murdoch, Le Guin, Baldwin, Lispector, PKD, Vonnegut)
   highAffinity: [
-    'philosophy', 'existential', 'literary', 'fiction', 'sci-fi', 'science fiction',
-    'speculative', 'dystopia', 'utopia', 'surreal', 'magical realism',
-    'latin american', 'japanese', 'african', 'postcolonial', 'translation',
-    'experimental', 'avant-garde', 'consciousness', 'identity', 'queer',
-    'ai', 'artificial intelligence', 'technology', 'digital', 'future',
-    'poetry', 'essay', 'journalism', 'media', 'culture', 'subculture'
+    'consciousness', 'identity', 'perception', 'memory', 'exile',
+    'revolution', 'utopia', 'dystopia', 'surrealism', 'magical realism',
+    'journalism', 'investigation', 'technology', 'ai', 'artificial intelligence',
+    'translation', 'migration', 'postcolonial', 'queer',
+    'philosophy', 'existential', 'phenomenology', 'experimental',
+    'avant-garde', 'metafiction', 'craft of writing',
+    'latin american', 'japanese', 'korean', 'west african', 'south asian',
+    'cross-cultural', 'cross-genre', 'improvisation',
+    'documentary', 'music documentary', 'retrospective',
+    'sci-fi', 'science fiction', 'speculative',
+    'literary', 'poetry', 'essay', 'media', 'culture', 'subculture'
   ],
   mediumAffinity: [
     'art', 'visual', 'design', 'architecture', 'photography', 'film',
-    'cinema', 'documentary', 'animation', 'world', 'global', 'urban',
+    'cinema', 'animation', 'world', 'global', 'urban',
     'politics', 'justice', 'democracy', 'history', 'anthropology',
-    'psychology', 'neuroscience', 'ecology', 'nature', 'climate'
+    'psychology', 'neuroscience', 'ecology', 'nature', 'climate',
+    'auteur', 'indie', 'classic cinema', 'essay film'
   ]
 };
 
@@ -103,7 +118,7 @@ function loadCulturalProfile(rootDir) {
   return themes;
 }
 
-function scoreEvent(event, taste, culturalProfile) {
+function scoreEvent(event, taste, culturalProfile, tasteDNA) {
   let score = 0;
   let breakdown = {};
 
@@ -157,11 +172,24 @@ function scoreEvent(event, taste, culturalProfile) {
   // === 3. VENUE BONUS (max 10pts) ===
   let venueBonus = 0;
   const venueLower = (event.venue || '').toLowerCase();
-  if (VENUE_TIERS.tier1.some(v => venueLower.includes(v))) {
+  
+  // Use taste DNA venue affinities if available, fall back to hardcoded
+  const dnaVenues = tasteDNA?.venueAffinities;
+  const t1 = dnaVenues 
+    ? [...(dnaVenues.tier1_perfect?.music || []), ...(dnaVenues.tier1_perfect?.cultural || [])].map(v => v.toLowerCase())
+    : VENUE_TIERS.tier1;
+  const t2 = dnaVenues
+    ? [...(dnaVenues.tier2_great?.music || []), ...(dnaVenues.tier2_great?.cultural || [])].map(v => v.toLowerCase())
+    : VENUE_TIERS.tier2;
+  const t3 = dnaVenues
+    ? [...(dnaVenues.tier3_solid?.music || []), ...(dnaVenues.tier3_solid?.cultural || [])].map(v => v.toLowerCase())
+    : VENUE_TIERS.tier3;
+    
+  if (t1.some(v => venueLower.includes(v))) {
     venueBonus = 10;
-  } else if (VENUE_TIERS.tier2.some(v => venueLower.includes(v))) {
+  } else if (t2.some(v => venueLower.includes(v))) {
     venueBonus = 7;
-  } else if (VENUE_TIERS.tier3.some(v => venueLower.includes(v))) {
+  } else if (t3.some(v => venueLower.includes(v))) {
     venueBonus = 4;
   }
   score += venueBonus;
@@ -202,15 +230,14 @@ function scoreEvent(event, taste, culturalProfile) {
   // === 6. FILM SCORING (for film type events) ===
   if (event.type === 'film') {
     // Films at great venues get a boost
-    const filmVenues = {
-      'film forum': 10, 'metrograph': 10, 'anthology film archives': 10,
-      'bam': 8, 'ifc center': 8, 'film at lincoln center': 9,
-      'angelika': 5, 'village east': 5, 'nitehawk': 7,
-      'museum of the moving image': 8, 'moma': 8
-    };
+    const filmVenues = tasteDNA?.venueAffinities?.tier1_perfect?.film || [];
+    const filmVenues2 = tasteDNA?.venueAffinities?.tier2_great?.film || [];
     const vl = (event.venue || '').toLowerCase();
-    for (const [v, pts] of Object.entries(filmVenues)) {
-      if (vl.includes(v)) { score += pts; break; }
+    
+    if (filmVenues.some(v => vl.includes(v.toLowerCase()))) {
+      score += 10;
+    } else if (filmVenues2.some(v => vl.includes(v.toLowerCase()))) {
+      score += 6;
     }
     
     // Classic/art films get a cultural signal boost
@@ -218,7 +245,38 @@ function scoreEvent(event, taste, culturalProfile) {
     for (const kw of CULTURAL_KEYWORDS.highAffinity) {
       if (filmText.includes(kw)) score += 3;
     }
+    
+    // Director matching from taste DNA
+    if (tasteDNA?.filmTaste?.favoredDirectors) {
+      for (const dir of tasteDNA.filmTaste.favoredDirectors) {
+        if (filmText.includes(dir.toLowerCase())) {
+          score += 15;
+          break;
+        }
+      }
+    }
+    
+    // Cross-disciplinary signal boost
+    if (tasteDNA?.crossDisciplinarySignals?.eventScoringHints?.strongPositive) {
+      for (const hint of tasteDNA.crossDisciplinarySignals.eventScoringHints.strongPositive) {
+        // Check if any words from the hint appear in event text
+        const hintWords = hint.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+        const matches = hintWords.filter(w => filmText.includes(w)).length;
+        if (matches >= 2) { score += 5; break; }
+      }
+    }
+    
     score = Math.min(100, score);
+  }
+  
+  // === 7. CROSS-DISCIPLINARY BOOST (for all event types) ===
+  if (tasteDNA?.crossDisciplinarySignals?.eventScoringHints?.strongPositive) {
+    const allText = eventText;
+    for (const hint of tasteDNA.crossDisciplinarySignals.eventScoringHints.strongPositive) {
+      const hintWords = hint.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+      const matches = hintWords.filter(w => allText.includes(w)).length;
+      if (matches >= 2) { score += 3; break; }
+    }
   }
 
   // Final score capped at 100
@@ -240,8 +298,13 @@ function scoreAll(events, rootDir) {
   
   console.log(`[scorer] Loaded ${taste.artistScores.size} artists, ${taste.genreKeywords.size} genre keywords`);
 
+  const tasteDNA = loadTasteDNA(rootDir);
+  if (tasteDNA) {
+    console.log(`[scorer] Loaded taste DNA (${Object.keys(tasteDNA).length} sections)`);
+  }
+
   const scored = events
-    .map(ev => scoreEvent(ev, taste, culturalProfile))
+    .map(ev => scoreEvent(ev, taste, culturalProfile, tasteDNA))
     .sort((a, b) => b.score - a.score);
 
   const tiers = { gold: 0, silver: 0, bronze: 0, dim: 0 };
