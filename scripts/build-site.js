@@ -301,14 +301,54 @@ function buildSite(events, outputDir) {
     }
     footer a { color: var(--accent); text-decoration: none; }
     .refresh-btn {
-      background: var(--bg-card); border: 1px solid var(--border);
-      color: var(--accent); padding: 0.5rem 1.25rem; border-radius: 6px;
-      cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.8rem;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--accent); padding: 0.3rem 0.8rem; border-radius: 20px;
+      cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.7rem;
       transition: all 0.2s;
     }
     .refresh-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
     .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .refresh-status { margin-top: 0.5rem; font-size: 0.7rem; }
+    .refresh-status { font-size: 0.65rem; color: var(--teal); }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; backdrop-filter: blur(4px);
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.75rem; max-width: 480px; width: 90%;
+      position: relative; max-height: 80vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; top: 0.75rem; right: 1rem;
+      background: none; border: none; color: var(--text-dim);
+      font-size: 1.5rem; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-badge {
+      font-family: 'DM Mono', monospace; font-size: 0.75rem;
+      display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+    .modal h2 {
+      font-size: 1.2rem; font-weight: 600; color: var(--text-bright);
+      line-height: 1.3; margin-bottom: 1rem;
+    }
+    .modal-details { display: flex; flex-direction: column; gap: 0.5rem; }
+    .modal-row { font-size: 0.85rem; color: var(--text); }
+    .modal-row:empty { display: none; }
+    .modal-row .label { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem; }
+    .modal-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .modal-link {
+      display: inline-block; margin-top: 1.25rem;
+      color: var(--accent); font-size: 0.85rem; text-decoration: none;
+      padding: 0.5rem 1rem; border: 1px solid var(--accent); border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .modal-link:hover { background: var(--accent); color: #fff; }
     
     /* === Responsive === */
     @media (max-width: 768px) {
@@ -355,6 +395,8 @@ function buildSite(events, outputDir) {
     <div class="stats" id="stats"></div>
     
     <div class="controls">
+      <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()">↻ Refresh</button>
+      <span class="refresh-status" id="refresh-status"></span>
       <button class="pill active" data-filter="all">All</button>
       <button class="pill" data-filter="music">Music</button>
       <button class="pill teal" data-filter="cultural">Talks & Culture</button>
@@ -377,10 +419,25 @@ function buildSite(events, outputDir) {
     <div class="events-grid" id="grid"></div>
     <div class="events-list hidden" id="list"></div>
     
+    <!-- Detail Modal -->
+    <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
+      <div class="modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="modal-badge" id="modal-badge"></div>
+        <h2 id="modal-title"></h2>
+        <div class="modal-details">
+          <div class="modal-row" id="modal-venue"></div>
+          <div class="modal-row" id="modal-date"></div>
+          <div class="modal-row" id="modal-artists"></div>
+          <div class="modal-row" id="modal-desc"></div>
+          <div class="modal-tags" id="modal-tags"></div>
+        </div>
+        <a class="modal-link" id="modal-link" href="#" target="_blank" rel="noopener">View original event page →</a>
+      </div>
+    </div>
+    
     <footer>
-      <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()">↻ Refresh data</button>
-      <div class="refresh-status" id="refresh-status"></div>
-      <div style="margin-top:0.75rem">NYC Tonight · RA · ThoughtGallery · Film Forum · Taste-scored</div>
+      NYC Tonight · RA · ThoughtGallery · Film Forum · Taste-scored
     </footer>
   </div>
   
@@ -474,6 +531,7 @@ function buildSite(events, outputDir) {
         '<span><strong>' + films + '</strong> films</span>' +
         (gold ? '<span><strong>' + gold + '</strong> top picks</span>' : '');
       
+      lastFiltered = filtered;
       renderGrid(filtered);
       renderList(filtered);
     }
@@ -482,7 +540,7 @@ function buildSite(events, outputDir) {
       const c = document.getElementById('grid');
       if (!events.length) { c.innerHTML = '<div class="empty">Nothing found.</div>'; return; }
       
-      c.innerHTML = events.map(ev => {
+      c.innerHTML = events.map((ev, i) => {
         const isFilm = ev.type === 'film';
         const tierClass = isFilm ? 'film-card' : ev.tier;
         const badgeClass = isFilm ? 'film-badge' : ev.tier;
@@ -490,9 +548,9 @@ function buildSite(events, outputDir) {
         const dateStr = ev.date ? fmtDate(ev.date) : '';
         const timeStr = ev.time ? ' · ' + fmtTime(ev.time) : '';
         
-        return '<div class="card ' + tierClass + '">' +
+        return '<div class="card ' + tierClass + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
           '<div class="card-head">' +
-            '<div class="card-title">' + (ev.url ? '<a href="' + ev.url + '" target="_blank" rel="noopener">' + esc(ev.name) + '</a>' : esc(ev.name)) + '</div>' +
+            '<div class="card-title">' + esc(ev.name) + '</div>' +
             '<div class="badge ' + badgeClass + '">' + ev.score + '</div>' +
           '</div>' +
           '<div class="card-body">' +
@@ -500,7 +558,6 @@ function buildSite(events, outputDir) {
             (dateStr ? '<div>' + dateStr + timeStr + '</div>' : '') +
             (artists ? '<div class="artists">' + esc(artists) + '</div>' : '') +
             (ev.director ? '<div class="artists">dir. ' + esc(ev.director) + '</div>' : '') +
-            (ev.description && isFilm ? '<div class="description">' + esc(ev.description.substring(0,120)) + '</div>' : '') +
           '</div>' +
           '<div class="tags">' +
             (ev.breakdown?.matchedArtists?.length ? '<span class="tag match">♥ match</span>' : '') +
@@ -518,15 +575,15 @@ function buildSite(events, outputDir) {
       const c = document.getElementById('list');
       if (!events.length) { c.innerHTML = '<div class="empty">Nothing found.</div>'; return; }
       
-      c.innerHTML = events.map(ev => {
+      c.innerHTML = events.map((ev, i) => {
         const isFilm = ev.type === 'film';
         const scoreClass = isFilm ? 'film-score' : ev.tier;
         const dateStr = ev.date ? fmtDateShort(ev.date) : '';
         
-        return '<div class="row ' + (ev.tier === 'dim' && !isFilm ? 'dim' : '') + '">' +
+        return '<div class="row ' + (ev.tier === 'dim' && !isFilm ? 'dim' : '') + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
           '<div class="score ' + scoreClass + '">' + ev.score + '</div>' +
           '<div class="info">' +
-            '<div class="title-line">' + (ev.url ? '<a href="' + ev.url + '" target="_blank" rel="noopener">' + esc(ev.name) + '</a>' : esc(ev.name)) + '</div>' +
+            '<div class="title-line">' + esc(ev.name) + '</div>' +
             '<div class="venue-line">' + esc(ev.venue || '') + '</div>' +
           '</div>' +
           '<div class="date-col">' + dateStr + '</div>' +
@@ -567,6 +624,71 @@ function buildSite(events, outputDir) {
         return (hour % 12 || 12) + ':' + m + (hour >= 12 ? 'p' : 'a');
       } catch { return t; }
     }
+    
+    let lastFiltered = [];
+    
+    function openModal(idx) {
+      const ev = lastFiltered[idx];
+      if (!ev) return;
+      
+      const isFilm = ev.type === 'film';
+      const badgeClass = isFilm ? 'film-badge' : ev.tier;
+      const artists = (ev.artists || []).filter(a => a !== ev.name).join(', ');
+      const dateStr = ev.date ? fmtDate(ev.date) : '';
+      const timeStr = ev.time ? fmtTime(ev.time) : '';
+      
+      const badge = document.getElementById('modal-badge');
+      badge.textContent = ev.score + ' pts';
+      badge.className = 'modal-badge badge ' + badgeClass;
+      
+      document.getElementById('modal-title').textContent = ev.name;
+      
+      const venueEl = document.getElementById('modal-venue');
+      venueEl.innerHTML = ev.venue ? '<span class="label">Venue</span>' + esc(ev.venue) : '';
+      
+      const dateEl = document.getElementById('modal-date');
+      dateEl.innerHTML = (dateStr || timeStr) ? '<span class="label">When</span>' + [dateStr, timeStr].filter(Boolean).join(' · ') : '';
+      
+      const artistEl = document.getElementById('modal-artists');
+      if (artists) {
+        artistEl.innerHTML = '<span class="label">Artists</span>' + esc(artists);
+      } else if (ev.director) {
+        artistEl.innerHTML = '<span class="label">Director</span>' + esc(ev.director);
+      } else {
+        artistEl.innerHTML = '';
+      }
+      
+      const descEl = document.getElementById('modal-desc');
+      descEl.innerHTML = ev.description ? '<span class="label">About</span>' + esc(ev.description) : '';
+      
+      const tagsEl = document.getElementById('modal-tags');
+      let tagsHtml = '';
+      if (ev.breakdown?.matchedArtists?.length) tagsHtml += '<span class="tag match">♥ taste match</span>';
+      if (ev.breakdown?.noveltyBonus > 3) tagsHtml += '<span class="tag discover">✦ discovery pick</span>';
+      if (isFilm) tagsHtml += '<span class="tag film-tag">film</span>';
+      if (ev.genre) tagsHtml += '<span class="tag genre">' + esc(ev.genre) + '</span>';
+      if (ev.subGenre) tagsHtml += '<span class="tag genre">' + esc(ev.subGenre) + '</span>';
+      tagsHtml += '<span class="tag source">' + esc(ev.source) + '</span>';
+      tagsEl.innerHTML = tagsHtml;
+      
+      const linkEl = document.getElementById('modal-link');
+      if (ev.url) {
+        linkEl.href = ev.url;
+        linkEl.style.display = 'inline-block';
+      } else {
+        linkEl.style.display = 'none';
+      }
+      
+      document.getElementById('modal-overlay').classList.remove('hidden');
+    }
+    
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    }
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
     
     function esc(s) {
       const d = document.createElement('div');
