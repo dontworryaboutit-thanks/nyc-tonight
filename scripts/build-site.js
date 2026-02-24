@@ -509,7 +509,7 @@ function buildSite(events, outputDir) {
       else if (currentFilter === 'film') f = f.filter(e => e.type === 'film');
       
       if (currentSort === 'date') {
-        f = [...f].sort((a, b) => (a.date || 'z').localeCompare(b.date || 'z'));
+        f = [...f].sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999'));
       } else {
         f = [...f].sort((a, b) => b.score - a.score);
       }
@@ -545,7 +545,10 @@ function buildSite(events, outputDir) {
         const isFilm = ev.type === 'film';
         const tierClass = isFilm ? 'film-card' : ev.tier;
         const badgeClass = isFilm ? 'film-badge' : ev.tier;
-        const artists = (ev.artists || []).filter(a => a !== ev.name).join(', ');
+        const allArtists = (ev.artists || []).filter(a => a !== ev.name);
+        const artists = allArtists.length > 4 
+          ? allArtists.slice(0, 4).join(', ') + ' +' + (allArtists.length - 4) + ' more'
+          : allArtists.join(', ');
         const dateStr = ev.date ? fmtDate(ev.date) : '';
         const timeStr = ev.time ? ' · ' + fmtTime(ev.time) : '';
         
@@ -555,8 +558,8 @@ function buildSite(events, outputDir) {
             '<div class="badge ' + badgeClass + '">' + ev.score + '</div>' +
           '</div>' +
           '<div class="card-body">' +
-            (ev.venue ? '<div class="venue">' + esc(ev.venue) + '</div>' : '') +
-            (dateStr ? '<div>' + dateStr + timeStr + '</div>' : '') +
+            (ev.venue ? '<div class="venue">📍 ' + esc(ev.venue) + '</div>' : '') +
+            (dateStr ? '<div>📅 ' + dateStr + timeStr + '</div>' : (isFilm ? '<div>📅 Now showing</div>' : '')) +
             (artists ? '<div class="artists">' + esc(artists) + '</div>' : '') +
             (ev.director ? '<div class="artists">dir. ' + esc(ev.director) + '</div>' : '') +
           '</div>' +
@@ -585,9 +588,9 @@ function buildSite(events, outputDir) {
           '<div class="score ' + scoreClass + '">' + ev.score + '</div>' +
           '<div class="info">' +
             '<div class="title-line">' + esc(ev.name) + '</div>' +
-            '<div class="venue-line">' + esc(ev.venue || '') + '</div>' +
+            '<div class="venue-line">' + (ev.venue ? '📍 ' : '') + esc(ev.venue || '') + '</div>' +
           '</div>' +
-          '<div class="date-col">' + dateStr + '</div>' +
+          '<div class="date-col">' + (dateStr || (isFilm ? 'showing' : '')) + '</div>' +
           '<div class="tags-col">' +
             (ev.breakdown?.matchedArtists?.length ? '<span class="mini-tag match">♥</span>' : '') +
             '<span class="mini-tag source">' + esc(ev.source) + '</span>' +
@@ -597,6 +600,7 @@ function buildSite(events, outputDir) {
     }
     
     function fmtDate(d) {
+      if (!d) return '';
       try {
         const date = new Date(d + 'T12:00:00');
         const today = new Date(); today.setHours(0,0,0,0);
