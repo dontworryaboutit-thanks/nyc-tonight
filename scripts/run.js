@@ -14,6 +14,8 @@ async function main() {
     { name: 'thoughtgallery', mod: require('./scrapers/thoughtgallery') },
     { name: 'filmforum', mod: require('./scrapers/filmforum') },
     { name: 'metrograph', mod: require('./scrapers/metrograph') },
+    { name: 'ifc', mod: require('./scrapers/ifc') },
+    { name: 'anthology', mod: require('./scrapers/anthology') },
     // Ticketmaster: needs valid API key (get one at developer.ticketmaster.com)
     // { name: 'ticketmaster', mod: require('./scrapers/ticketmaster') },
     // Bandsintown: API now requires auth, disabled for now
@@ -58,7 +60,22 @@ async function main() {
   const { scoreAll } = require('./score-events');
   const scored = scoreAll(deduped, ROOT);
 
-  // 4. Filter out very low-scoring events
+  // 4. Add venue coordinates for map
+  const venueCoords = require('./venue-coords.json');
+  for (const ev of scored) {
+    const venueLower = (ev.venue || '').toLowerCase();
+    for (const [name, coords] of Object.entries(venueCoords)) {
+      if (venueLower.includes(name)) {
+        ev.lat = coords[0];
+        ev.lng = coords[1];
+        break;
+      }
+    }
+  }
+  const withCoords = scored.filter(e => e.lat);
+  console.log(`Geocoded: ${withCoords.length}/${scored.length} events have coordinates`);
+
+  // 5. Filter out very low-scoring events
   const MIN_SCORE = 10;
   const filtered = scored.filter(ev => ev.score >= MIN_SCORE);
   console.log(`\nFiltered: ${scored.length} → ${filtered.length} events (removed ${scored.length - filtered.length} below score ${MIN_SCORE})`);

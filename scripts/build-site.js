@@ -23,6 +23,8 @@ function buildSite(events, outputDir) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NYC Tonight</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -417,6 +419,16 @@ function buildSite(events, outputDir) {
       .card { padding: 0.9rem 1rem; }
     }
     
+    /* Map */
+    .events-map {
+      max-width: 1280px; margin: 0.5rem auto;
+      padding: 0 2rem 4rem;
+    }
+    .events-map.hidden { display: none; }
+    .leaflet-popup-content { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; }
+    .leaflet-popup-content strong { color: var(--accent); }
+    .map-popup-score { font-family: 'DM Mono', monospace; font-size: 0.7rem; }
+    
     /* Hide one view */
     .events-grid.hidden, .events-list.hidden { display: none; }
   </style>
@@ -455,6 +467,7 @@ function buildSite(events, outputDir) {
       <div class="view-toggle">
         <button class="view-btn" data-view="grid" title="Cards">▦</button>
         <button class="view-btn active" data-view="list" title="List">☰</button>
+        <button class="view-btn" data-view="map" title="Map">🗺</button>
       </div>
       
       <div class="sort-group">
@@ -466,6 +479,9 @@ function buildSite(events, outputDir) {
     
     <div class="events-grid hidden" id="grid"></div>
     <div class="events-list" id="list"></div>
+    <div class="events-map hidden" id="map-container">
+      <div id="map" style="width:100%;height:600px;border-radius:10px;border:1px solid var(--border)"></div>
+    </div>
     
     <!-- Detail Modal -->
     <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
@@ -566,6 +582,8 @@ function buildSite(events, outputDir) {
         currentView = btn.dataset.view;
         document.getElementById('grid').classList.toggle('hidden', currentView !== 'grid');
         document.getElementById('list').classList.toggle('hidden', currentView !== 'list');
+        document.getElementById('map-container').classList.toggle('hidden', currentView !== 'map');
+        if (currentView === 'map') initMap();
       });
     });
     
@@ -771,6 +789,55 @@ function buildSite(events, outputDir) {
       const d = document.createElement('div');
       d.textContent = s || '';
       return d.innerHTML;
+    }
+    
+    let mapInstance = null;
+    function initMap() {
+      if (mapInstance) { mapInstance.invalidateSize(); return; }
+      
+      const filtered = lastFiltered.filter(e => e.lat && e.lng && e.score >= 30);
+      
+      mapInstance = L.map('map').setView([40.7280, -73.9800], 12);
+      
+      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+      L.tileLayer(isDark 
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        { attribution: '&copy; OSM &copy; CARTO', maxZoom: 18 }
+      ).addTo(mapInstance);
+      
+      // Group events by venue (lat+lng)
+      const venues = {};
+      for (const ev of filtered) {
+        const key = ev.lat + ',' + ev.lng;
+        if (!venues[key]) venues[key] = { lat: ev.lat, lng: ev.lng, venue: ev.venue, events: [] };
+        venues[key].events.push(ev);
+      }
+      
+      for (const v of Object.values(venues)) {
+        const topScore = Math.max(...v.events.map(e => e.score));
+        const color = topScore >= 60 ? '#d4a02b' : topScore >= 40 ? '#d4622b' : '#4a9e8e';
+        const radius = Math.max(6, Math.min(14, topScore / 5));
+        
+        const marker = L.circleMarker([v.lat, v.lng], {
+          radius, fillColor: color, color: '#fff', weight: 1, fillOpacity: 0.8
+        }).addTo(mapInstance);
+        
+        const eventList = v.events
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 8)
+          .map(e => '<div style="margin:3px 0"><span class="map-popup-score">[' + e.score + ']</span> <strong>' + esc(e.name).substring(0, 40) + '</strong>' +
+            (e.date ? '<br><span style="opacity:0.6">' + fmtDateShort(e.date) + '</span>' : '') + '</div>')
+          .join('');
+        
+        const more = v.events.length > 8 ? '<div style="opacity:0.5">+' + (v.events.length - 8) + ' more</div>' : '';
+        
+        marker.bindPopup(
+          '<div style="max-width:220px"><strong style="font-size:0.9rem">' + esc(v.venue) + '</strong>' +
+          '<div style="margin-top:6px">' + eventList + more + '</div></div>',
+          { maxWidth: 250 }
+        );
+      }
     }
     
     async function triggerRefresh() {
