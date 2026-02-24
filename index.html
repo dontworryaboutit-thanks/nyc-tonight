@@ -429,7 +429,7 @@
       return f;
     }
     
-    function renderAll() {
+    function renderAll() { try { console.log("renderAll called, EVENTS:", EVENTS.length);
       const filtered = getFiltered();
       
       const gold = filtered.filter(e => e.tier === 'gold').length;
@@ -447,7 +447,7 @@
       
       renderGrid(filtered);
       renderList(filtered);
-    }
+    } catch(e) { console.error("renderAll error:", e); document.getElementById("grid").innerHTML = "<div style=color:red>" + e.message + "</div>"; } }
     
     function renderGrid(events) {
       const c = document.getElementById('grid');
