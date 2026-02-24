@@ -58,17 +58,21 @@ async function scrape() {
         // Clean up name — Songkick often includes "@ Venue" in title
         const cleanName = name.replace(/ @ .+$/, '').trim();
         
+        // Extract image if available
+        const image = ev.image || (ev.performer?.[0]?.image) || '';
+        
         allEvents.push({
           name: cleanName || name,
           artists: performers.length ? performers : [cleanName || name],
           venue,
           date,
           time,
-          url: eventUrl.split('?')[0], // strip tracking params
+          url: eventUrl.split('?')[0],
           source: 'songkick',
           genre: '',
           subGenre: '',
-          type: 'music'
+          type: 'music',
+          image: typeof image === 'string' ? image : ''
         });
       }
       

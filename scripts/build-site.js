@@ -29,6 +29,35 @@ function buildSite(events, outputDir) {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
+      color-scheme: dark light;
+    }
+    
+    [data-theme="light"] {
+      --bg: #f5f3ef;
+      --bg-warm: #f0ece6;
+      --bg-card: #ffffff;
+      --bg-card-hover: #faf8f5;
+      --border: #e0dbd3;
+      --text: #3a3530;
+      --text-dim: #8a8278;
+      --text-bright: #1a1714;
+      --accent: #c4511a;
+      --accent-glow: rgba(196, 81, 26, 0.1);
+      --accent-light: #d4622b;
+      --teal: #2d7a6c;
+      --teal-dim: rgba(45, 122, 108, 0.08);
+      --gold: #b8860b;
+      --gold-bg: rgba(184, 134, 11, 0.08);
+      --silver: #6b7280;
+      --silver-bg: rgba(107, 114, 128, 0.06);
+      --bronze: #92631e;
+      --bronze-bg: rgba(146, 99, 30, 0.06);
+      --dim: #a09890;
+      --film: #6b5b95;
+      --film-bg: rgba(107, 91, 149, 0.08);
+    }
+    
+    [data-theme="dark"] {
       --bg: #0c1018;
       --bg-warm: #0f1119;
       --bg-card: #141822;
@@ -181,10 +210,17 @@ function buildSite(events, outputDir) {
       transform: translateY(-1px);
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
+    .card-img {
+      width: 100%; height: 140px; object-fit: cover;
+      border-radius: 6px; margin-bottom: 0.6rem;
+      background: var(--border);
+    }
     .card.gold { border-left: 3px solid var(--gold); }
     .card.silver { border-left: 3px solid var(--silver); }
     .card.bronze { border-left: 3px solid var(--bronze); }
-    .card.dim { opacity: 0.5; }
+    .card.dim { }
+    .card.gold .card-title, .card.silver .card-title, .card.bronze .card-title { font-weight: 700; }
+    .card.gold, .card.silver { background: var(--bg-card-hover); }
     .card.film-card { border-left: 3px solid var(--film); }
     
     .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.6rem; }
@@ -248,7 +284,7 @@ function buildSite(events, outputDir) {
       font-size: 0.85rem;
     }
     .events-list .row:hover { background: var(--bg-card); }
-    .events-list .row.dim { opacity: 0.45; }
+    .events-list .row.gold .title-line, .events-list .row.silver .title-line, .events-list .row.bronze .title-line { font-weight: 700; }
     
     .row .score {
       font-family: 'DM Mono', monospace;
@@ -300,6 +336,15 @@ function buildSite(events, outputDir) {
       font-family: 'DM Mono', monospace;
     }
     footer a { color: var(--accent); text-decoration: none; }
+    .theme-toggle {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text); padding: 0.3rem 0.5rem; border-radius: 50%;
+      cursor: pointer; font-size: 1rem; line-height: 1;
+      transition: all 0.2s; width: 2rem; height: 2rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+    
     .refresh-btn {
       background: transparent; border: 1px solid var(--border);
       color: var(--accent); padding: 0.3rem 0.8rem; border-radius: 20px;
@@ -389,7 +434,10 @@ function buildSite(events, outputDir) {
       <div class="brand">
         <h1>NYC <span>Tonight</span></h1>
       </div>
-      <div class="meta">${updated} ET</div>
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀</button>
+        <div class="meta">${updated} ET</div>
+      </div>
     </header>
     
     <div class="stats" id="stats"></div>
@@ -448,6 +496,25 @@ function buildSite(events, outputDir) {
     let currentSort = 'score';
     let currentView = 'grid';
     let lastFiltered = [];
+    
+    // Theme
+    function initTheme() {
+      const saved = localStorage.getItem('nyc-tonight-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      updateThemeIcon(saved);
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('nyc-tonight-theme', next);
+      updateThemeIcon(next);
+    }
+    function updateThemeIcon(theme) {
+      const btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = theme === 'dark' ? '☀' : '🌙';
+    }
+    initTheme();
     
     // PIN gate
     const gate = document.getElementById('pin-gate');
@@ -552,7 +619,10 @@ function buildSite(events, outputDir) {
         const dateStr = ev.date ? fmtDate(ev.date) : '';
         const timeStr = ev.time ? ' · ' + fmtTime(ev.time) : '';
         
+        const showImg = ev.image && ev.score >= 40;
+        
         return '<div class="card ' + tierClass + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
+          (showImg ? '<img class="card-img" src="' + esc(ev.image) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
           '<div class="card-head">' +
             '<div class="card-title">' + esc(ev.name) + '</div>' +
             '<div class="badge ' + badgeClass + '">' + ev.score + '</div>' +
@@ -584,7 +654,7 @@ function buildSite(events, outputDir) {
         const scoreClass = isFilm ? 'film-score' : ev.tier;
         const dateStr = ev.date ? fmtDateShort(ev.date) : '';
         
-        return '<div class="row ' + (ev.tier === 'dim' && !isFilm ? 'dim' : '') + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
+        return '<div class="row ' + ev.tier + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
           '<div class="score ' + scoreClass + '">' + ev.score + '</div>' +
           '<div class="info">' +
             '<div class="title-line">' + esc(ev.name) + '</div>' +
