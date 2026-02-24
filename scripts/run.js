@@ -16,6 +16,7 @@ async function main() {
     { name: 'metrograph', mod: require('./scrapers/metrograph') },
     { name: 'ifc', mod: require('./scrapers/ifc') },
     { name: 'anthology', mod: require('./scrapers/anthology') },
+    { name: 'nitehawk', mod: require('./scrapers/nitehawk') },
     // Ticketmaster: needs valid API key (get one at developer.ticketmaster.com)
     // { name: 'ticketmaster', mod: require('./scrapers/ticketmaster') },
     // Bandsintown: API now requires auth, disabled for now
