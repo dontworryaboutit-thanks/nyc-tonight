@@ -275,8 +275,8 @@ function buildSite(events, outputDir) {
     }
     .events-list .row {
       display: grid;
-      grid-template-columns: 2.5rem 1fr auto auto;
-      gap: 1rem;
+      grid-template-columns: 5rem 1fr auto 2.5rem;
+      gap: 0.75rem;
       align-items: center;
       padding: 0.6rem 0.75rem;
       border-bottom: 1px solid var(--border);
@@ -402,7 +402,7 @@ function buildSite(events, outputDir) {
       .events-grid { padding: 0 1rem 3rem; grid-template-columns: 1fr; }
       .events-list { padding: 0 0.5rem 3rem; }
       .events-list .row { 
-        grid-template-columns: 2rem 1fr auto;
+        grid-template-columns: 3.5rem 1fr 2rem;
         gap: 0.5rem; font-size: 0.8rem;
         padding: 0.5rem;
       }
@@ -453,8 +453,8 @@ function buildSite(events, outputDir) {
       <div class="spacer"></div>
       
       <div class="view-toggle">
-        <button class="view-btn active" data-view="grid" title="Cards">▦</button>
-        <button class="view-btn" data-view="list" title="List">☰</button>
+        <button class="view-btn" data-view="grid" title="Cards">▦</button>
+        <button class="view-btn active" data-view="list" title="List">☰</button>
       </div>
       
       <div class="sort-group">
@@ -464,8 +464,8 @@ function buildSite(events, outputDir) {
       </div>
     </div>
     
-    <div class="events-grid" id="grid"></div>
-    <div class="events-list hidden" id="list"></div>
+    <div class="events-grid hidden" id="grid"></div>
+    <div class="events-list" id="list"></div>
     
     <!-- Detail Modal -->
     <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
@@ -494,7 +494,7 @@ function buildSite(events, outputDir) {
     const PIN = '7429';
     let currentFilter = 'all';
     let currentSort = 'score';
-    let currentView = 'grid';
+    let currentView = 'list';
     let lastFiltered = [];
     
     // Theme
@@ -629,7 +629,7 @@ function buildSite(events, outputDir) {
           '</div>' +
           '<div class="card-body">' +
             (ev.venue ? '<div class="venue">📍 ' + esc(ev.venue) + '</div>' : '') +
-            (dateStr ? '<div>📅 ' + dateStr + timeStr + '</div>' : (isFilm ? '<div>📅 Now showing</div>' : '')) +
+            (dateStr ? '<div>📅 ' + dateStr + (isFilm && timeStr ? ' [' + fmtTime(ev.time) + ']' : timeStr) + '</div>' : (isFilm ? '<div>📅 Now showing</div>' : '')) +
             (artists ? '<div class="artists">' + esc(artists) + '</div>' : '') +
             (ev.director ? '<div class="artists">dir. ' + esc(ev.director) + '</div>' : '') +
           '</div>' +
@@ -654,17 +654,21 @@ function buildSite(events, outputDir) {
         const scoreClass = isFilm ? 'film-score' : ev.tier;
         const dateStr = ev.date ? fmtDateShort(ev.date) : '';
         
+        const timeStr2 = ev.time ? fmtTime(ev.time) : '';
+        const showtime = isFilm && timeStr2 ? ' [' + timeStr2 + ']' : '';
+        
         return '<div class="row ' + ev.tier + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
-          '<div class="score ' + scoreClass + '">' + ev.score + '</div>' +
+          '<div class="date-col">' + (dateStr || (isFilm ? 'showing' : '')) + (isFilm && timeStr2 ? '<br><span style="opacity:0.6">' + timeStr2 + '</span>' : '') + '</div>' +
           '<div class="info">' +
-            '<div class="title-line">' + esc(ev.name) + '</div>' +
-            '<div class="venue-line">' + (ev.venue ? '📍 ' : '') + esc(ev.venue || '') + '</div>' +
+            '<div class="title-line">' + esc(ev.name) + (isFilm && timeStr2 ? ' <span style="opacity:0.5">[' + timeStr2 + ']</span>' : '') + '</div>' +
+            '<div class="venue-line">' + (ev.venue ? '📍 ' : '') + esc(ev.venue || '') +
+              (ev.breakdown?.matchedArtists?.length ? ' <span class="mini-tag match">♥</span>' : '') +
+              ' <span class="mini-tag source">' + esc(ev.source) + '</span>' +
+            '</div>' +
           '</div>' +
-          '<div class="date-col">' + (dateStr || (isFilm ? 'showing' : '')) + '</div>' +
           '<div class="tags-col">' +
-            (ev.breakdown?.matchedArtists?.length ? '<span class="mini-tag match">♥</span>' : '') +
-            '<span class="mini-tag source">' + esc(ev.source) + '</span>' +
           '</div>' +
+          '<div class="score ' + scoreClass + '">' + ev.score + '</div>' +
         '</div>';
       }).join('');
     }
