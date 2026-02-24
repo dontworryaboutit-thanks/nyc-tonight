@@ -13,6 +13,7 @@ async function main() {
     { name: 'residentadvisor', mod: require('./scrapers/residentadvisor') },
     { name: 'thoughtgallery', mod: require('./scrapers/thoughtgallery') },
     { name: 'filmforum', mod: require('./scrapers/filmforum') },
+    { name: 'metrograph', mod: require('./scrapers/metrograph') },
     // Ticketmaster: needs valid API key (get one at developer.ticketmaster.com)
     // { name: 'ticketmaster', mod: require('./scrapers/ticketmaster') },
     // Bandsintown: API now requires auth, disabled for now
