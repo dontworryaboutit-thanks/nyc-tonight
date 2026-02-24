@@ -199,6 +199,28 @@ function scoreEvent(event, taste, culturalProfile) {
   score += noveltyBonus;
   breakdown.noveltyBonus = Math.round(noveltyBonus * 10) / 10;
 
+  // === 6. FILM SCORING (for film type events) ===
+  if (event.type === 'film') {
+    // Films at great venues get a boost
+    const filmVenues = {
+      'film forum': 10, 'metrograph': 10, 'anthology film archives': 10,
+      'bam': 8, 'ifc center': 8, 'film at lincoln center': 9,
+      'angelika': 5, 'village east': 5, 'nitehawk': 7,
+      'museum of the moving image': 8, 'moma': 8
+    };
+    const vl = (event.venue || '').toLowerCase();
+    for (const [v, pts] of Object.entries(filmVenues)) {
+      if (vl.includes(v)) { score += pts; break; }
+    }
+    
+    // Classic/art films get a cultural signal boost
+    const filmText = (event.name + ' ' + (event.description || '') + ' ' + (event.subGenre || '')).toLowerCase();
+    for (const kw of CULTURAL_KEYWORDS.highAffinity) {
+      if (filmText.includes(kw)) score += 3;
+    }
+    score = Math.min(100, score);
+  }
+
   // Final score capped at 100
   score = Math.min(100, Math.round(score * 10) / 10);
 
