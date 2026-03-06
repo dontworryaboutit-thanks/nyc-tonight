@@ -95,6 +95,9 @@ async function main() {
   const { buildSite } = require('./build-site');
   buildSite(scoredFinal, path.join(ROOT, 'docs'));
 
+  // 7. Copy to root index.html (GitHub Pages may serve from root)
+  fs.copyFileSync(path.join(ROOT, 'docs', 'index.html'), path.join(ROOT, 'index.html'));
+
   console.log(`\n=== Done! ${scoredFinal.length} events scored and site generated ===`);
   
   // Print top 5
