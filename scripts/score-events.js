@@ -118,6 +118,26 @@ function loadCulturalProfile(rootDir) {
   return themes;
 }
 
+// Find best taste-profile match for an event artist (exact, substring, or contains)
+function findBestArtistScore(artistName, tasteArtistScores) {
+  const lower = artistName.toLowerCase().trim();
+  // 1. Exact match
+  const exact = tasteArtistScores.get(lower);
+  if (exact !== undefined) return exact;
+  // 2. Taste artist is substring of event artist (e.g. "philip glass" in "Philip Glass & Laurie Anderson")
+  let best = 0;
+  for (const [tasteName, tasteScore] of tasteArtistScores) {
+    if (tasteName.length < 4) continue; // skip very short names to avoid false matches
+    if (lower.includes(tasteName)) {
+      best = Math.max(best, tasteScore);
+    } else if (tasteName.includes(lower) && lower.length >= 5) {
+      // Event artist is substring of taste artist (e.g. "shabaka" in "shabaka hutchings")
+      best = Math.max(best, tasteScore * 0.8);
+    }
+  }
+  return best > 0 ? best : 0;
+}
+
 function scoreEvent(event, taste, culturalProfile, tasteDNA) {
   let score = 0;
   let breakdown = {};
@@ -131,17 +151,27 @@ function scoreEvent(event, taste, culturalProfile, tasteDNA) {
   ].join(' ').toLowerCase();
 
   // === 1. DIRECT ARTIST MATCH (max 40pts) ===
-  let directMatch = 0;
+  // Uses substring matching + stacking for multi-artist bills
+  const artistHits = []; // {artist, tasteScore}
   const matchedArtists = [];
   for (const artist of event.artists || []) {
-    const artistLower = artist.toLowerCase();
-    const tasteScore = taste.artistScores.get(artistLower);
-    if (tasteScore !== undefined) {
-      // Normalize taste score (0-1.1ish) to contribution (max ~40pts for top artist)
-      directMatch = Math.max(directMatch, Math.min(40, tasteScore * 36));
+    const tasteScore = findBestArtistScore(artist, taste.artistScores);
+    if (tasteScore > 0) {
+      artistHits.push({ artist, tasteScore });
       matchedArtists.push(artist);
     }
   }
+  // Sort by score descending, stack with diminishing returns
+  artistHits.sort((a, b) => b.tasteScore - a.tasteScore);
+  let directMatch = 0;
+  for (let i = 0; i < artistHits.length; i++) {
+    const raw = artistHits[i].tasteScore;
+    // Better curve: even a 0.3-score artist should feel meaningful (base 18 + scaled)
+    const pts = Math.min(40, 18 + raw * 22);
+    const weight = i === 0 ? 1.0 : i === 1 ? 0.5 : i === 2 ? 0.25 : 0.1;
+    directMatch += pts * weight;
+  }
+  directMatch = Math.min(40, directMatch);
   score += directMatch;
   breakdown.directMatch = Math.round(directMatch * 10) / 10;
   breakdown.matchedArtists = matchedArtists;
@@ -151,18 +181,34 @@ function scoreEvent(event, taste, culturalProfile, tasteDNA) {
   const eventGenres = [event.genre, event.subGenre]
     .filter(Boolean)
     .map(g => g.toLowerCase());
+
+  // Expand genre keywords with taste-dna clusters
+  const allGenreKeywords = new Set(taste.genreKeywords);
+  if (tasteDNA && tasteDNA.musicTaste && tasteDNA.musicTaste.topGenreClusters) {
+    for (const cluster of tasteDNA.musicTaste.topGenreClusters) {
+      for (const kw of cluster.keywords || []) {
+        allGenreKeywords.add(kw.toLowerCase());
+      }
+    }
+  }
   
   for (const g of eventGenres) {
     // Check each word in the genre against taste keywords
     const words = g.split(/[\s,\-\/]+/);
     for (const word of words) {
-      if (taste.genreKeywords.has(word)) {
+      if (allGenreKeywords.has(word)) {
         genreMatch += 8;
       }
     }
     // Also check full genre string
-    if (taste.genreKeywords.has(g)) {
+    if (allGenreKeywords.has(g)) {
       genreMatch += 12;
+    }
+    // Partial multi-word match (e.g. "deep house" → check "house")
+    for (const kw of allGenreKeywords) {
+      if (kw.length > 3 && g.includes(kw) && !words.includes(kw)) {
+        genreMatch += 5;
+      }
     }
   }
   genreMatch = Math.min(25, genreMatch);
@@ -286,7 +332,7 @@ function scoreEvent(event, taste, culturalProfile, tasteDNA) {
     ...event,
     score,
     breakdown,
-    tier: score >= 80 ? 'gold' : score >= 60 ? 'silver' : score >= 40 ? 'bronze' : 'dim'
+    tier: score >= 65 ? 'gold' : score >= 45 ? 'silver' : score >= 30 ? 'bronze' : 'dim'
   };
 }
 

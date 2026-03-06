@@ -36,6 +36,12 @@ async function scrape() {
         const title = $el.text().trim();
         if (!title || title.length < 3) return;
         if (/^(film screenings|calendar|month view|list view)/i.test(title)) return;
+        // Filter out navigation/section links that aren't real films
+        const navTitles = ['buy tickets', 'programs', 'essential cinema', 'film calendar',
+          'premieres/revivals', 'retrospectives', 'about', 'support', 'membership',
+          'special events', 'contact', 'donate', 'visit', 'rentals', 'press',
+          'join', 'search', 'home', 'directions', 'faq'];
+        if (navTitles.includes(title.toLowerCase())) return;
         
         // Time is usually in a preceding element
         const parentText = $el.parent().text().trim();
