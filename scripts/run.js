@@ -11,6 +11,8 @@ async function main() {
   const scrapers = [
     { name: 'songkick', mod: require('./scrapers/songkick') },
     { name: 'residentadvisor', mod: require('./scrapers/residentadvisor') },
+    { name: 'jazznyc', mod: require('./scrapers/jazznyc') },
+    { name: 'donyc', mod: require('./scrapers/donyc') },
     { name: 'thoughtgallery', mod: require('./scrapers/thoughtgallery') },
     { name: 'filmforum', mod: require('./scrapers/filmforum') },
     { name: 'metrograph', mod: require('./scrapers/metrograph') },
