@@ -240,13 +240,13 @@ async function scrape() {
   
   // Fetch music events by specific date (most reliable)
   console.log('[donyc] Fetching music events by date...');
-  const musicEvents = await fetchMusicByDate(14);
+  const musicEvents = await fetchMusicByDate(10);
   allEvents.push(...musicEvents);
   console.log(`[donyc] Got ${musicEvents.length} music events`);
   
   // Fetch comedy events
   console.log('[donyc] Fetching comedy events...');
-  const comedyEvents = await fetchCategoryPages('comedy', 7);
+  const comedyEvents = await fetchCategoryPages('comedy', 4);
   // Filter out duplicate venues/entries  
   const uniqueComedy = comedyEvents.filter(ev => !allEvents.some(e => 
     e.name === ev.name && e.date === ev.date && e.venue === ev.venue
@@ -257,7 +257,7 @@ async function scrape() {
   // Fetch film events
   console.log('[donyc] Fetching film events...');
   try {
-    const filmEvents = await fetchCategoryPages('film-screenings', 7);
+    const filmEvents = await fetchCategoryPages('film-screenings', 3);
     const uniqueFilm = filmEvents.filter(ev => !allEvents.some(e => 
       e.name === ev.name && e.date === ev.date && e.venue === ev.venue
     ));
@@ -270,7 +270,7 @@ async function scrape() {
   // Fetch theatre/art events
   console.log('[donyc] Fetching theatre/art events...');
   try {
-    const theatreEvents = await fetchCategoryPages('theatre-art-design', 7);
+    const theatreEvents = await fetchCategoryPages('theatre-art-design', 3);
     const uniqueTheatre = theatreEvents.filter(ev => !allEvents.some(e => 
       e.name === ev.name && e.date === ev.date && e.venue === ev.venue
     ));
