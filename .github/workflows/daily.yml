@@ -31,6 +31,6 @@ jobs:
         run: |
           git config user.name "NYC Tonight Bot"
           git config user.email "bot@nyc-tonight.local"
-          git add docs/
+          git add docs/ index.html
           git diff --cached --quiet || git commit -m "chore: daily update $(date -u +%Y-%m-%d)"
           git push

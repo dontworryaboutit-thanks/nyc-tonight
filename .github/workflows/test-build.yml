@@ -12,7 +12,7 @@ on:
         default: 'both'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -27,9 +27,9 @@ jobs:
 
       - run: npm ci
 
-      # On push events inputs.mode is empty — run both steps
+      # Probe only runs when explicitly dispatched; pushes just build
       - name: Probe sources
-        if: ${{ inputs.mode == 'probe' || inputs.mode == 'both' || inputs.mode == '' }}
+        if: ${{ inputs.mode == 'probe' || inputs.mode == 'both' }}
         run: node scripts/dev/probe-sources.js
 
       - name: Full build
@@ -48,3 +48,14 @@ jobs:
             .cache/scored-events.json
             docs/index.html
           if-no-files-found: ignore
+
+      # On branch pushes, commit the freshly built site back so the branch
+      # always carries current data (merging it updates GitHub Pages instantly)
+      - name: Commit built site to branch
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git config user.name "NYC Tonight Bot"
+          git config user.email "bot@nyc-tonight.local"
+          git add docs/ index.html
+          git diff --cached --quiet || git commit -m "chore: rebuild site [skip ci]"
+          git push
