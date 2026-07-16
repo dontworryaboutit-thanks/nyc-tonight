@@ -42,6 +42,10 @@ async function main() {
 
   console.log(`\n=== Total raw events: ${allEvents.length} ===\n`);
 
+  // 2a. Sanitize: drop junk entries, invalid dates, past events, far-future noise
+  const { sanitizeEvents } = require('./sanitize-events');
+  allEvents = sanitizeEvents(allEvents);
+
   // 2. Deduplicate (same artist + venue + date)
   const seen = new Set();
   const deduped = [];
@@ -82,7 +86,19 @@ async function main() {
   const MIN_SCORE = 10;
   const filtered = scored.filter(ev => ev.score >= MIN_SCORE);
   console.log(`\nFiltered: ${scored.length} → ${filtered.length} events (removed ${scored.length - filtered.length} below score ${MIN_SCORE})`);
-  const scoredFinal = filtered;
+
+  // 5b. Feed balance: no single source may flood a given day.
+  // Events arrive sorted by score, so keeping the first N per source+day keeps the best.
+  const MAX_PER_SOURCE_PER_DAY = 20;
+  const perSourceDay = new Map();
+  const balanced = filtered.filter(ev => {
+    const key = `${ev.source}|${ev.date || 'undated'}`;
+    const n = (perSourceDay.get(key) || 0) + 1;
+    perSourceDay.set(key, n);
+    return n <= MAX_PER_SOURCE_PER_DAY;
+  });
+  console.log(`Balanced: ${filtered.length} → ${balanced.length} events (capped at ${MAX_PER_SOURCE_PER_DAY}/source/day)`);
+  const scoredFinal = balanced;
 
   // 5. Save scored events as JSON (for debugging)
   const cachePath = path.join(ROOT, '.cache');
