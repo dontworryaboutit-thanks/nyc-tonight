@@ -315,6 +315,14 @@ function scoreEvent(event, taste, culturalProfile, tasteDNA) {
     score = Math.min(100, score);
   }
   
+  // === 6b. CURATED-SOURCE BONUS ===
+  // The Skint is a hand-picked digest — being listed at all is a quality
+  // signal the keyword scoring can't see (names are short, no artist data)
+  if (event.source === 'theskint') {
+    score += 12;
+    if (event.genre === 'free') score += 3;
+  }
+
   // === 7. CROSS-DISCIPLINARY BOOST (for all event types) ===
   if (tasteDNA?.crossDisciplinarySignals?.eventScoringHints?.strongPositive) {
     const allText = eventText;
