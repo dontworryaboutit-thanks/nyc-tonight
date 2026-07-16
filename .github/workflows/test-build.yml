@@ -1,0 +1,43 @@
+name: Test Build (branch)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'probe | build | both'
+        required: false
+        default: 'both'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Probe sources
+        if: ${{ inputs.mode == 'probe' || inputs.mode == 'both' }}
+        run: node scripts/dev/probe-sources.js
+
+      - name: Full build
+        if: ${{ inputs.mode == 'build' || inputs.mode == 'both' }}
+        run: node scripts/run.js
+
+      - name: Upload build output
+        if: ${{ always() && (inputs.mode == 'build' || inputs.mode == 'both') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            .cache/scored-events.json
+            docs/index.html
+          if-no-files-found: ignore
