@@ -1,6 +1,9 @@
 name: Test Build (branch)
 
 on:
+  push:
+    branches:
+      - 'claude/**'
   workflow_dispatch:
     inputs:
       mode:
@@ -24,16 +27,17 @@ jobs:
 
       - run: npm ci
 
+      # On push events inputs.mode is empty — run both steps
       - name: Probe sources
-        if: ${{ inputs.mode == 'probe' || inputs.mode == 'both' }}
+        if: ${{ inputs.mode == 'probe' || inputs.mode == 'both' || inputs.mode == '' }}
         run: node scripts/dev/probe-sources.js
 
       - name: Full build
-        if: ${{ inputs.mode == 'build' || inputs.mode == 'both' }}
+        if: ${{ inputs.mode == 'build' || inputs.mode == 'both' || inputs.mode == '' }}
         run: node scripts/run.js
 
       - name: Upload build output
-        if: ${{ always() && (inputs.mode == 'build' || inputs.mode == 'both') }}
+        if: ${{ always() && inputs.mode != 'probe' }}
         uses: actions/upload-artifact@v4
         with:
           name: build-output
