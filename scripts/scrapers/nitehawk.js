@@ -1,144 +1,108 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
+// Nitehawk restructured in 2026: /showtimes/ is gone. Each venue page shows
+// one day's films as .show-thumbnail-holder blocks, with per-date pages at
+// /<venue>/<YYYY-MM-DD>/<n>/ linked from the date navigation.
+
 const LOCATIONS = [
-  { name: 'Nitehawk Williamsburg', url: 'https://nitehawkcinema.com/williamsburg/showtimes/' },
-  { name: 'Nitehawk Prospect Park', url: 'https://nitehawkcinema.com/prospectpark/showtimes/' }
+  { name: 'Nitehawk Williamsburg', base: 'https://nitehawkcinema.com/williamsburg' },
+  { name: 'Nitehawk Prospect Park', base: 'https://nitehawkcinema.com/prospectpark' }
 ];
+
+const MAX_DAYS = 7;
+const HEADERS = {
+  'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+};
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function todayNY() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+}
+
+// "3:10 pm 5:40 pm Sold Out 9:15 pm" → first time as HH:MM (24h)
+function firstShowtime(text) {
+  const m = text.match(/(\d{1,2}):(\d{2})\s*([ap])m?/i);
+  if (!m) return '';
+  let h = parseInt(m[1]);
+  if (m[3].toLowerCase() === 'p' && h !== 12) h += 12;
+  if (m[3].toLowerCase() === 'a' && h === 12) h = 0;
+  return `${String(h).padStart(2, '0')}:${m[2]}`;
+}
+
+function parseDayPage(html, loc, date) {
+  const $ = cheerio.load(html);
+  const events = [];
+  const seen = new Set();
+
+  $('.show-thumbnail-holder').each((i, el) => {
+    const $el = $(el);
+    const title = $el.find('.show-title').first().text().trim();
+    if (!title || seen.has(title)) return;
+    seen.add(title);
+
+    let url = $el.find('a.overlay-link').attr('href') || $el.find('a[href*="/movies/"]').attr('href') || '';
+    if (url && !url.startsWith('http')) url = `${loc.base}${url}`;
+    url = url.split('?')[0];
+
+    const time = firstShowtime($el.parent().text());
+
+    events.push({
+      name: title.replace(/\s*\((DCP|35MM|16MM|4K)\)\s*$/i, '').trim(),
+      artists: [],
+      venue: loc.name,
+      date,
+      time,
+      url: url || `${loc.base}/`,
+      source: 'nitehawk',
+      genre: 'film',
+      subGenre: '',
+      type: 'film',
+      description: $el.find('.short-description').first().text().trim().slice(0, 200)
+    });
+  });
+
+  return events;
+}
 
 async function scrape() {
   const allEvents = [];
-  
+
   for (const loc of LOCATIONS) {
     try {
       console.log(`[nitehawk] Fetching ${loc.name}...`);
-      const res = await fetch(loc.url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; nyc-tonight/1.0)' }
-      });
-      if (!res.ok) continue;
-      
+      const res = await fetch(`${loc.base}/`, { headers: HEADERS });
+      if (!res.ok) {
+        console.warn(`[nitehawk] ${loc.name}: HTTP ${res.status}`);
+        continue;
+      }
       const html = await res.text();
-      const $ = cheerio.load(html);
-      
-      // Nitehawk uses WordPress blog posts for showtimes
-      // Each post title is "Film Title – M/D/YY @ H:MM pm"
-      // Try article titles, entry titles, post titles
-      const selectors = [
-        'h2.entry-title a',
-        'h2 a[href*="showtimes"]',
-        '.entry-title a',
-        'article h2 a',
-        '.post-title a',
-        'a[href*="showtimes/"]'
-      ];
-      
-      const seen = new Set();
-      
-      for (const sel of selectors) {
-        $(sel).each((i, el) => {
-          const $el = $(el);
-          const text = $el.text().trim();
-          const link = $el.attr('href') || '';
-          
-          if (seen.has(text)) return;
-          
-          // Parse "Title – M/D/YY @ H:MM pm"
-          const match = text.match(/^(.+?)\s*[–-]\s*(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s*@?\s*(\d{1,2}:\d{2}\s*[ap]m)?/i);
-          if (!match) {
-            // Also try URL-based parsing: /showtimes/film-title-M-D-YY-HMMpm/
-            const urlMatch = link.match(/showtimes\/(.+?)(?:-(\d{1,2})-(\d{1,2})-(\d{2}))?-(\d{1,4})-?([ap]m)?/i);
-            if (!urlMatch) return;
-          }
-          if (!match) return;
-          
-          seen.add(text);
-          
-          const title = match[1].trim().replace(/\s*\(\d{4}\)\s*$/, '');
-          const month = match[2].padStart(2, '0');
-          const day = match[3].padStart(2, '0');
-          let year = match[4];
-          if (year.length === 2) year = '20' + year;
-          const date = `${year}-${month}-${day}`;
-          
-          let time = '';
-          if (match[5]) {
-            const tp = match[5].toLowerCase().match(/(\d{1,2}):(\d{2})\s*(am|pm)/);
-            if (tp) {
-              let h = parseInt(tp[1]);
-              if (tp[3] === 'pm' && h !== 12) h += 12;
-              if (tp[3] === 'am' && h === 12) h = 0;
-              time = `${String(h).padStart(2, '0')}:${tp[2]}`;
-            }
-          }
-          
-          allEvents.push({
-            name: title,
-            artists: [],
-            director: '',
-            venue: loc.name,
-            date,
-            time,
-            url: link.startsWith('http') ? link : `https://nitehawkcinema.com${link}`,
-            source: 'nitehawk',
-            genre: 'film',
-            subGenre: '',
-            type: 'film',
-            description: ''
-          });
-        });
-        
-        if (allEvents.filter(e => e.venue === loc.name).length > 0) break;
+
+      // Today's films from the venue page itself
+      allEvents.push(...parseDayPage(html, loc, todayNY()));
+
+      // Date navigation links: /<venue>/<YYYY-MM-DD>/<n>/
+      const dateUrls = [...new Set(html.match(/https?:\/\/nitehawkcinema\.com\/[a-z]+\/(\d{4}-\d{2}-\d{2})\/\d+\//g) || [])]
+        .filter(u => u.startsWith(loc.base))
+        .slice(0, MAX_DAYS);
+
+      for (const dayUrl of dateUrls) {
+        const date = (dayUrl.match(/(\d{4}-\d{2}-\d{2})/) || [])[1];
+        if (!date || date === todayNY()) continue;
+        try {
+          await sleep(500);
+          const dayRes = await fetch(dayUrl, { headers: HEADERS });
+          if (!dayRes.ok) continue;
+          allEvents.push(...parseDayPage(await dayRes.text(), loc, date));
+        } catch {}
       }
-      
-      // Fallback: search all links for showtime patterns in href
-      if (allEvents.filter(e => e.venue === loc.name).length === 0) {
-        $('a[href*="showtimes/"]').each((i, el) => {
-          const href = $(el).attr('href') || '';
-          const text = $(el).text().trim();
-          if (!text || text.length < 3 || seen.has(text)) return;
-          
-          const match = text.match(/^(.+?)\s*[–-]\s*(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s*@?\s*(\d{1,2}:\d{2}\s*[ap]m)?/i);
-          if (!match) return;
-          
-          seen.add(text);
-          const title = match[1].trim().replace(/\s*\(\d{4}\)\s*$/, '');
-          const month = match[2].padStart(2, '0');
-          const day = match[3].padStart(2, '0');
-          let year = match[4]; if (year.length === 2) year = '20' + year;
-          
-          let time = '';
-          if (match[5]) {
-            const tp = match[5].toLowerCase().match(/(\d{1,2}):(\d{2})\s*(am|pm)/);
-            if (tp) {
-              let h = parseInt(tp[1]);
-              if (tp[3] === 'pm' && h !== 12) h += 12;
-              if (tp[3] === 'am' && h === 12) h = 0;
-              time = `${String(h).padStart(2, '0')}:${tp[2]}`;
-            }
-          }
-          
-          allEvents.push({
-            name: title,
-            artists: [],
-            director: '',
-            venue: loc.name,
-            date: `${year}-${month}-${day}`,
-            time,
-            url: href.startsWith('http') ? href : `https://nitehawkcinema.com${href}`,
-            source: 'nitehawk',
-            genre: 'film',
-            subGenre: '',
-            type: 'film',
-            description: ''
-          });
-        });
-      }
-      
     } catch (err) {
       console.warn(`[nitehawk] Error for ${loc.name}: ${err.message}`);
     }
   }
-  
+
   console.log(`[nitehawk] Found ${allEvents.length} showtimes`);
   return allEvents;
 }

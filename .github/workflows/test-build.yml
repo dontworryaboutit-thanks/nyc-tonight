@@ -35,6 +35,9 @@ jobs:
       - name: Full build
         if: ${{ inputs.mode == 'build' || inputs.mode == 'both' || inputs.mode == '' }}
         run: node scripts/run.js
+        env:
+          TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
+          BANDSINTOWN_APP_ID: ${{ secrets.BANDSINTOWN_APP_ID }}
 
       - name: Upload build output
         if: ${{ always() && inputs.mode != 'probe' }}

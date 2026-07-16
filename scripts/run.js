@@ -19,13 +19,23 @@ async function main() {
     { name: 'ifc', mod: require('./scrapers/ifc') },
     { name: 'anthology', mod: require('./scrapers/anthology') },
     { name: 'nitehawk', mod: require('./scrapers/nitehawk') },
-    // Ticketmaster: needs valid API key (get one at developer.ticketmaster.com)
-    // { name: 'ticketmaster', mod: require('./scrapers/ticketmaster') },
-    // Bandsintown: API now requires auth, disabled for now
-    // { name: 'bandsintown', mod: require('./scrapers/bandsintown') },
-    // Oh My Rockness: API locked down, JS-rendered pages
+    { name: 'theskint', mod: require('./scrapers/theskint') },
+    // Oh My Rockness: API domain gone, site bot-blocked (checked 2026-07)
     // { name: 'ohmyrockness', mod: require('./scrapers/ohmyrockness') },
   ];
+
+  // Keyed sources: enabled automatically when their API key is present
+  // (set as GitHub Actions secrets → env in daily.yml)
+  if (process.env.TICKETMASTER_API_KEY) {
+    scrapers.push({ name: 'ticketmaster', mod: require('./scrapers/ticketmaster') });
+  } else {
+    console.log('(ticketmaster skipped — set TICKETMASTER_API_KEY to enable)');
+  }
+  if (process.env.BANDSINTOWN_APP_ID) {
+    scrapers.push({ name: 'bandsintown', mod: require('./scrapers/bandsintown') });
+  } else {
+    console.log('(bandsintown skipped — set BANDSINTOWN_APP_ID to enable)');
+  }
 
   let allEvents = [];
   
