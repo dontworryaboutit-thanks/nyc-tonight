@@ -6,6 +6,14 @@ const MAX_PAGES = 6; // 50 per page = ~300 events
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Songkick's bot detection 4xx's the generic bot UA and rapid crawls;
+// browser-like headers + slow pacing keep it happy longer
+const HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9'
+};
+
 async function scrape() {
   const allEvents = [];
   
@@ -15,12 +23,17 @@ async function scrape() {
     for (let page = 1; page <= MAX_PAGES; page++) {
       const url = page === 1 ? BASE_URL : `${BASE_URL}?page=${page}`;
       
-      const res = await fetch(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; nyc-tonight/1.0)' }
-      });
-      
+      let res = await fetch(url, { headers: HEADERS });
+
+      if (!res.ok && page === 1) {
+        // First page must succeed — retry once after a pause before giving up
+        console.warn(`[songkick] Page 1: HTTP ${res.status}, retrying in 5s...`);
+        await sleep(5000);
+        res = await fetch(url, { headers: HEADERS });
+      }
+
       if (!res.ok) {
-        console.warn(`[songkick] Page ${page}: HTTP ${res.status}`);
+        console.warn(`[songkick] Page ${page}: HTTP ${res.status}, stopping (keeping ${allEvents.length} events)`);
         break;
       }
       
@@ -79,7 +92,7 @@ async function scrape() {
       console.log(`[songkick] Page ${page}: ${jsonLdBlocks.length} events (${allEvents.length} total)`);
       
       if (jsonLdBlocks.length < 50) break; // last page
-      await sleep(300);
+      await sleep(1500);
     }
     
     console.log(`[songkick] Done. Found ${allEvents.length} NYC events`);

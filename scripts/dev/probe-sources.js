@@ -1,145 +1,144 @@
-// Diagnostic probe: run from CI (GitHub runner has open egress) to check
-// source health and feasibility of new sources. Prints structured findings
-// to the log; not part of the production build.
+// Diagnostic probe round 2: structure deep-dive for Nitehawk, DICE,
+// The Skint, AdHoc. Run from CI (GitHub runner has open egress).
 
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
-const UA_BOT = 'Mozilla/5.0 (compatible; nyc-tonight/1.0)';
 const UA_BROWSER =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
-async function probe(label, url, opts = {}) {
-  const { ua = UA_BROWSER, method = 'GET', headers = {}, body } = opts;
+async function get(url, opts = {}) {
+  const { method = 'GET', headers = {}, body } = opts;
   try {
     const res = await fetch(url, {
       method,
-      headers: { 'User-Agent': ua, Accept: 'text/html,application/json;q=0.9,*/*;q=0.8', ...headers },
+      headers: { 'User-Agent': UA_BROWSER, Accept: 'text/html,application/json;q=0.9,*/*;q=0.8', ...headers },
       body,
-      timeout: 20000,
-      redirect: 'follow'
+      timeout: 20000
     });
     const text = await res.text();
-    console.log(`\n### ${label}`);
-    console.log(`    ${method} ${url}`);
-    console.log(`    status=${res.status} bytes=${text.length} content-type=${res.headers.get('content-type')}`);
+    console.log(`\n### ${method} ${url}\n    status=${res.status} bytes=${text.length}`);
     return { status: res.status, text };
   } catch (err) {
-    console.log(`\n### ${label}\n    ${method} ${url}\n    ERROR: ${err.message}`);
+    console.log(`\n### ${method} ${url}\n    ERROR: ${err.message}`);
     return { status: 0, text: '' };
   }
 }
 
-function analyzeHtml(text, checks) {
-  if (!text) return;
-  const $ = cheerio.load(text);
-  for (const [desc, sel] of Object.entries(checks)) {
-    const found = $(sel);
-    const sample = found.first().text().trim().replace(/\s+/g, ' ').slice(0, 120);
-    console.log(`    ${desc}: ${found.length} matches ${sample ? `| first: "${sample}"` : ''}`);
+function walkKeys(obj, depth = 0, maxDepth = 3) {
+  if (depth > maxDepth || obj === null || typeof obj !== 'object') return;
+  const indent = '      ' + '  '.repeat(depth);
+  if (Array.isArray(obj)) {
+    console.log(`${indent}[array len=${obj.length}]`);
+    if (obj.length) walkKeys(obj[0], depth + 1, maxDepth);
+    return;
   }
-  const jsonLd = $('script[type="application/ld+json"]');
-  let ldTypes = [];
-  jsonLd.each((i, el) => {
-    try {
-      const data = JSON.parse($(el).html());
-      const items = Array.isArray(data) ? data : [data];
-      items.forEach(it => ldTypes.push(it['@type']));
-    } catch {}
-  });
-  console.log(`    JSON-LD blocks: ${jsonLd.length} | types: ${ldTypes.slice(0, 10).join(', ')}`);
-  const nextData = $('#__NEXT_DATA__');
-  if (nextData.length) console.log(`    __NEXT_DATA__: present (${nextData.html().length} bytes)`);
+  for (const [k, v] of Object.entries(obj).slice(0, 25)) {
+    const t = Array.isArray(v) ? `array(${v.length})` : typeof v;
+    const preview = typeof v === 'string' ? ` = "${v.slice(0, 60)}"` : typeof v === 'number' ? ` = ${v}` : '';
+    console.log(`${indent}${k}: ${t}${preview}`);
+    if (t.startsWith('array') && v.length && typeof v[0] === 'object') walkKeys(v[0], depth + 1, maxDepth);
+    else if (t === 'object') walkKeys(v, depth + 1, maxDepth);
+  }
 }
 
 async function main() {
-  console.log('=== SOURCE PROBE ===\n');
+  console.log('=== SOURCE PROBE ROUND 2 ===');
 
-  // --- 1. Songkick (currently returns 0) ---
-  let r = await probe('songkick metro page (bot UA)', 'https://www.songkick.com/metro-areas/7644-us-new-york', { ua: UA_BOT });
-  if (r.status !== 200) {
-    r = await probe('songkick metro page (browser UA)', 'https://www.songkick.com/metro-areas/7644-us-new-york');
-  }
-  if (r.status === 200) {
-    analyzeHtml(r.text, {
-      'event listings (.event-listings li)': '.event-listings li',
-      'microformat listings': 'li[title]',
-      'artist links': 'a[href*="/concerts/"]'
+  // --- 1. Nitehawk: inspect venue page structure ---
+  const nh = await get('https://nitehawkcinema.com/williamsburg/');
+  if (nh.status === 200) {
+    const $ = cheerio.load(nh.text);
+    // Dump the first "film" block's HTML to understand structure
+    const block = $('.film, .show, .movie, [class*="showtime"]').first();
+    console.log('    first film-ish block HTML (1800 chars):');
+    console.log('    ' + (block.parent().html() || '').replace(/\s+/g, ' ').slice(0, 1800));
+    // Look for date-based navigation
+    const dateLinks = new Set();
+    $('a[href*="date"], a[href*="?d="], [data-date]').each((i, el) => {
+      dateLinks.add(($(el).attr('href') || $(el).attr('data-date') || '').slice(0, 80));
     });
-  } else {
-    console.log(`    body starts: ${r.text.slice(0, 300).replace(/\s+/g, ' ')}`);
+    console.log('    date-ish links:', [...dateLinks].slice(0, 8).join(' | '));
+    // Any embedded JSON?
+    const scripts = $('script:not([src])');
+    scripts.each((i, el) => {
+      const txt = $(el).html() || '';
+      if (/showtime|sessions|films|movies/i.test(txt) && txt.length > 500) {
+        console.log(`    inline script #${i} (${txt.length} bytes) mentions films/showtimes:`);
+        console.log('    ' + txt.replace(/\s+/g, ' ').slice(0, 800));
+      }
+    });
+    // API endpoints in page source?
+    const apiRefs = nh.text.match(/https?:\/\/[^"'\s]*(?:api|veezi|boxoffice|agile)[^"'\s]*/gi);
+    console.log('    api-ish URLs:', apiRefs ? [...new Set(apiRefs)].slice(0, 6).join(' | ') : 'none');
+  }
+  // Try likely date-view URL
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  await get(`https://nitehawkcinema.com/williamsburg/?date=${tomorrow}`).then(r => {
+    if (r.status === 200) {
+      const $ = cheerio.load(r.text);
+      console.log(`    film blocks on date view: ${$('.film, .show, .movie').length}`);
+    }
+  });
+
+  // --- 2. DICE unified_search: inspect response shape ---
+  const dicePost = (body) => get('https://api.dice.fm/unified_search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  let r = await dicePost({ q: 'new york' });
+  if (r.status === 200) {
+    try {
+      const data = JSON.parse(r.text);
+      console.log('    top-level keys + structure:');
+      walkKeys(data, 0, 4);
+    } catch (e) { console.log('    JSON parse fail:', e.message); }
   }
 
-  // --- 2. Nitehawk (currently returns 0) ---
-  for (const url of ['https://nitehawkcinema.com/williamsburg/showtimes/', 'https://nitehawkcinema.com/williamsburg/']) {
-    const n = await probe(`nitehawk ${url.split('.com')[1]}`, url);
-    if (n.status === 200) {
-      analyzeHtml(n.text, {
-        'entry titles (h2.entry-title a)': 'h2.entry-title a',
-        'showtime links (a[href*=showtimes])': 'a[href*="showtimes"]',
-        'film blocks (.film, .show, .movie)': '.film, .show, .movie, [class*="showtime"]'
-      });
-      const m = n.text.match(/showtimes\/[a-z0-9-]+/gi);
-      console.log(`    showtimes/ URLs in raw html: ${m ? m.length : 0} | sample: ${m ? m.slice(0, 3).join(', ') : ''}`);
-    } else {
-      console.log(`    body starts: ${n.text.slice(0, 300).replace(/\s+/g, ' ')}`);
+  // Also check the browse page for embedded state (it 404s but renders SPA content)
+  r = await get('https://dice.fm/browse/new-york');
+  if (r.text) {
+    const $ = cheerio.load(r.text);
+    const nd = $('#__NEXT_DATA__');
+    console.log(`    __NEXT_DATA__ present: ${nd.length > 0} (${nd.length ? nd.html().length + ' bytes' : ''})`);
+    if (nd.length) {
+      try {
+        const data = JSON.parse(nd.html());
+        walkKeys(data?.props?.pageProps || data, 0, 3);
+      } catch {}
+    }
+    const apiRefs = r.text.match(/https?:\/\/api\.dice\.fm[^"'\s\\]*/gi);
+    console.log('    api.dice.fm refs:', apiRefs ? [...new Set(apiRefs)].slice(0, 8).join(' | ') : 'none');
+  }
+
+  // --- 3. The Skint: RSS item content structure ---
+  r = await get('https://theskint.com/feed/');
+  if (r.status === 200) {
+    const items = r.text.split('<item>').slice(1);
+    console.log(`    items: ${items.length}`);
+    for (const item of items.slice(0, 3)) {
+      const title = (item.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+      const pub = (item.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || '';
+      console.log(`    --- item: "${title.trim().slice(0, 80)}" pub=${pub.trim()}`);
+      const content = (item.match(/<content:encoded><!\[CDATA\[([\s\S]*?)\]\]><\/content:encoded>/) || [])[1] || '';
+      console.log(`    content bytes=${content.length}; first 1000:`);
+      console.log('    ' + content.replace(/\s+/g, ' ').slice(0, 1000));
     }
   }
 
-  // --- 3. DICE ---
-  r = await probe('dice browse page', 'https://dice.fm/browse/new-york/music');
-  if (r.status === 200) analyzeHtml(r.text, { 'event links': 'a[href*="/event/"]' });
-  r = await probe(
-    'dice unified search API',
-    'https://api.dice.fm/unified_search',
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-timestamp': new Date().toISOString() },
-      body: JSON.stringify({ q: '', 'types': ['event'], filter: { cities: [{ id: 'new-york' }] } })
+  // --- 4. AdHoc Presents: find the right path ---
+  for (const u of ['https://www.adhocpresents.com/', 'https://adhocpresents.com/shows', 'https://www.adhocpresents.com/events']) {
+    const a = await get(u);
+    if (a.status === 200) {
+      const $ = cheerio.load(a.text);
+      console.log('    title:', $('title').text().trim().slice(0, 80));
+      const links = new Set();
+      $('a').each((i, el) => { const h = $(el).attr('href') || ''; if (/show|event/i.test(h)) links.add(h.slice(0, 70)); });
+      console.log('    show/event links:', [...links].slice(0, 10).join(' | '));
+      break;
     }
-  );
-  if (r.status === 200) console.log(`    body starts: ${r.text.slice(0, 400)}`);
-  else console.log(`    body starts: ${r.text.slice(0, 200)}`);
-  r = await probe('dice events api v1', 'https://events-api.dice.fm/v1/events?page[size]=5&filter[cities][]=New%20York');
-  console.log(`    body starts: ${r.text.slice(0, 300).replace(/\s+/g, ' ')}`);
-
-  // --- 4. Bandsintown (artist-targeted, driven by taste profile) ---
-  for (const artist of ['Floating Points', 'Geese', 'Kamasi Washington']) {
-    r = await probe(
-      `bandsintown artist events: ${artist}`,
-      `https://rest.bandsintown.com/artists/${encodeURIComponent(artist)}/events?app_id=nyc-tonight-personal&date=upcoming`
-    );
-    console.log(`    body starts: ${r.text.slice(0, 250).replace(/\s+/g, ' ')}`);
   }
-
-  // --- 5. Oh My Rockness (indie shows) ---
-  r = await probe('ohmyrockness API no auth', 'https://api.ohmyrockness.com/api/v3/shows.json?index=true&regioned=1');
-  console.log(`    body starts: ${r.text.slice(0, 200).replace(/\s+/g, ' ')}`);
-  r = await probe('ohmyrockness homepage', 'https://www.ohmyrockness.com/');
-  if (r.status === 200) {
-    const tokenMatch = r.text.match(/Token token=[^"'\\]+/);
-    console.log(`    auth token in page source: ${tokenMatch ? tokenMatch[0].slice(0, 40) + '...' : 'not found'}`);
-    const jsSrcs = [];
-    cheerio.load(r.text)('script[src]').each((i, el) => jsSrcs.push(cheerio.load(r.text)(el).attr('src')));
-    console.log(`    script srcs: ${jsSrcs.slice(0, 8).join(' | ')}`);
-  }
-
-  // --- 6. The Skint (daily free/cheap NYC events blog, WordPress) ---
-  r = await probe('theskint RSS', 'https://theskint.com/feed/');
-  if (r.status === 200) {
-    const items = r.text.match(/<item>/g);
-    console.log(`    RSS items: ${items ? items.length : 0}`);
-    const title = r.text.match(/<item>[\s\S]*?<title>([\s\S]*?)<\/title>/);
-    console.log(`    first item title: ${title ? title[1].trim().slice(0, 100) : 'n/a'}`);
-  }
-
-  // --- 7. AdHoc Presents (indie/experimental shows NYC) ---
-  r = await probe('adhoc presents shows', 'https://www.adhocpresents.com/shows');
-  if (r.status === 200) analyzeHtml(r.text, { 'show links': 'a[href*="/shows/"], a[href*="/event"]', 'headings': 'h1,h2,h3' });
-
-  // --- 8. NYC Parks free events ---
-  r = await probe('nycgovparks events', 'https://www.nycgovparks.org/events');
-  if (r.status === 200) analyzeHtml(r.text, { 'event rows': '.event, [class*="event"]' });
 
   console.log('\n=== PROBE DONE ===');
 }
