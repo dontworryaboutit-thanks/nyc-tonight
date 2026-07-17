@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const path = require('path');
 const fs = require('fs');
 
-const APP_ID = 'nyc-tonight';
+const APP_ID = process.env.BANDSINTOWN_APP_ID || 'nyc-tonight';
 const BASE_URL = 'https://rest.bandsintown.com/artists';
 
 // Rate limit: be nice, 100ms between requests

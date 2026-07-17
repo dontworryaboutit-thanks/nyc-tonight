@@ -1,0 +1,61 @@
+name: Test Build (branch)
+
+on:
+  push:
+    branches:
+      - 'claude/**'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'probe | build | both'
+        required: false
+        default: 'both'
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      # Probe only runs when explicitly dispatched; pushes just build
+      - name: Probe sources
+        if: ${{ inputs.mode == 'probe' || inputs.mode == 'both' }}
+        run: node scripts/dev/probe-sources.js
+
+      - name: Full build
+        if: ${{ inputs.mode == 'build' || inputs.mode == 'both' || inputs.mode == '' }}
+        run: node scripts/run.js
+        env:
+          TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
+          BANDSINTOWN_APP_ID: ${{ secrets.BANDSINTOWN_APP_ID }}
+
+      - name: Upload build output
+        if: ${{ always() && inputs.mode != 'probe' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            .cache/scored-events.json
+            docs/index.html
+          if-no-files-found: ignore
+
+      # On branch pushes, commit the freshly built site back so the branch
+      # always carries current data (merging it updates GitHub Pages instantly)
+      - name: Commit built site to branch
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git config user.name "NYC Tonight Bot"
+          git config user.email "bot@nyc-tonight.local"
+          git add docs/ index.html
+          git diff --cached --quiet || git commit -m "chore: rebuild site [skip ci]"
+          git push

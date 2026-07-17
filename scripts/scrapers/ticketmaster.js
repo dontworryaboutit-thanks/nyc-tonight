@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const API_KEY = 'GQspMmPFcnZ2EMag5gRBGdR5aYMR5jBg';
+const API_KEY = process.env.TICKETMASTER_API_KEY || '';
 const BASE_URL = 'https://app.ticketmaster.com/discovery/v2/events.json';
 
 async function scrape() {

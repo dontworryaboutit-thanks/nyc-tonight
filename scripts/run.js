@@ -19,13 +19,23 @@ async function main() {
     { name: 'ifc', mod: require('./scrapers/ifc') },
     { name: 'anthology', mod: require('./scrapers/anthology') },
     { name: 'nitehawk', mod: require('./scrapers/nitehawk') },
-    // Ticketmaster: needs valid API key (get one at developer.ticketmaster.com)
-    // { name: 'ticketmaster', mod: require('./scrapers/ticketmaster') },
-    // Bandsintown: API now requires auth, disabled for now
-    // { name: 'bandsintown', mod: require('./scrapers/bandsintown') },
-    // Oh My Rockness: API locked down, JS-rendered pages
+    { name: 'theskint', mod: require('./scrapers/theskint') },
+    // Oh My Rockness: API domain gone, site bot-blocked (checked 2026-07)
     // { name: 'ohmyrockness', mod: require('./scrapers/ohmyrockness') },
   ];
+
+  // Keyed sources: enabled automatically when their API key is present
+  // (set as GitHub Actions secrets → env in daily.yml)
+  if (process.env.TICKETMASTER_API_KEY) {
+    scrapers.push({ name: 'ticketmaster', mod: require('./scrapers/ticketmaster') });
+  } else {
+    console.log('(ticketmaster skipped — set TICKETMASTER_API_KEY to enable)');
+  }
+  if (process.env.BANDSINTOWN_APP_ID) {
+    scrapers.push({ name: 'bandsintown', mod: require('./scrapers/bandsintown') });
+  } else {
+    console.log('(bandsintown skipped — set BANDSINTOWN_APP_ID to enable)');
+  }
 
   let allEvents = [];
   
@@ -41,6 +51,10 @@ async function main() {
   }
 
   console.log(`\n=== Total raw events: ${allEvents.length} ===\n`);
+
+  // 2a. Sanitize: drop junk entries, invalid dates, past events, far-future noise
+  const { sanitizeEvents } = require('./sanitize-events');
+  allEvents = sanitizeEvents(allEvents);
 
   // 2. Deduplicate (same artist + venue + date)
   const seen = new Set();
@@ -82,7 +96,19 @@ async function main() {
   const MIN_SCORE = 10;
   const filtered = scored.filter(ev => ev.score >= MIN_SCORE);
   console.log(`\nFiltered: ${scored.length} → ${filtered.length} events (removed ${scored.length - filtered.length} below score ${MIN_SCORE})`);
-  const scoredFinal = filtered;
+
+  // 5b. Feed balance: no single source may flood a given day.
+  // Events arrive sorted by score, so keeping the first N per source+day keeps the best.
+  const MAX_PER_SOURCE_PER_DAY = 20;
+  const perSourceDay = new Map();
+  const balanced = filtered.filter(ev => {
+    const key = `${ev.source}|${ev.date || 'undated'}`;
+    const n = (perSourceDay.get(key) || 0) + 1;
+    perSourceDay.set(key, n);
+    return n <= MAX_PER_SOURCE_PER_DAY;
+  });
+  console.log(`Balanced: ${filtered.length} → ${balanced.length} events (capped at ${MAX_PER_SOURCE_PER_DAY}/source/day)`);
+  const scoredFinal = balanced;
 
   // 5. Save scored events as JSON (for debugging)
   const cachePath = path.join(ROOT, '.cache');
