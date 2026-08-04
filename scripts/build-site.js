@@ -26,66 +26,66 @@ function buildSite(events, outputDir) {
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root { color-scheme: dark light; }
 
     [data-theme="light"] {
-      --bg: #faf8f4;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f6f3ee;
-      --bg-inset: #f1ede6;
-      --border: #e7e2d9;
-      --border-soft: #efebe3;
-      --text: #46413a;
-      --text-dim: #97907f;
-      --text-bright: #1f1b16;
-      --accent: #bf4e18;
-      --accent-glow: rgba(191, 78, 24, 0.09);
-      --accent-light: #d4622b;
-      --teal: #2d7a6c;
-      --teal-dim: rgba(45, 122, 108, 0.09);
-      --gold: #a97c08;
-      --gold-bg: rgba(184, 134, 11, 0.09);
-      --silver: #6b7280;
-      --silver-bg: rgba(107, 114, 128, 0.07);
-      --bronze: #92631e;
-      --bronze-bg: rgba(146, 99, 30, 0.07);
-      --dim: #b0a89d;
-      --film: #6b5b95;
-      --film-bg: rgba(107, 91, 149, 0.09);
-      --shadow: 0 2px 12px rgba(60, 50, 30, 0.07);
-      --shadow-hover: 0 4px 18px rgba(60, 50, 30, 0.11);
+      --bg: #f1ead9;
+      --bg-card: #f8f2e5;
+      --bg-card-hover: #f3ebd7;
+      --bg-inset: #eae0c9;
+      --border: #ddd0b3;
+      --border-soft: #e7dcc2;
+      --text: #4a4130;
+      --text-dim: #948a70;
+      --text-bright: #2a2318;
+      --accent: #b75b32;
+      --accent-glow: rgba(183, 91, 50, 0.10);
+      --accent-light: #c97449;
+      --teal: #5b8770;
+      --teal-dim: rgba(91, 135, 112, 0.11);
+      --gold: #a07d2e;
+      --gold-bg: rgba(160, 125, 46, 0.10);
+      --silver: #857a68;
+      --silver-bg: rgba(133, 122, 104, 0.10);
+      --bronze: #8c5a34;
+      --bronze-bg: rgba(140, 90, 52, 0.10);
+      --dim: #c4b99e;
+      --film: #7c5c72;
+      --film-bg: rgba(124, 92, 114, 0.10);
+      --shadow: 0 2px 10px rgba(80, 60, 30, 0.06);
+      --shadow-hover: 0 4px 16px rgba(80, 60, 30, 0.09);
     }
 
     [data-theme="dark"] {
-      --bg: #0d1017;
-      --bg-card: #131722;
-      --bg-card-hover: #191f2c;
-      --bg-inset: #10141d;
-      --border: #202636;
-      --border-soft: #1a1f2d;
-      --text: #c3c8d2;
-      --text-dim: #616a7e;
-      --text-bright: #edeff4;
-      --accent: #d4622b;
-      --accent-glow: rgba(212, 98, 43, 0.14);
-      --accent-light: #e8854f;
-      --teal: #4a9e8e;
-      --teal-dim: rgba(74, 158, 142, 0.12);
-      --gold: #d4a02b;
-      --gold-bg: rgba(212, 160, 43, 0.1);
-      --silver: #8892a4;
-      --silver-bg: rgba(136, 146, 164, 0.08);
-      --bronze: #a06830;
-      --bronze-bg: rgba(160, 104, 48, 0.08);
-      --dim: #3e4453;
-      --film: #8474b8;
-      --film-bg: rgba(123, 104, 174, 0.12);
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-      --shadow-hover: 0 6px 22px rgba(0, 0, 0, 0.35);
+      --bg: #1c1712;
+      --bg-card: #251f17;
+      --bg-card-hover: #2d261c;
+      --bg-inset: #221c15;
+      --border: #3b3223;
+      --border-soft: #2f2921;
+      --text: #d9cfbb;
+      --text-dim: #948a72;
+      --text-bright: #f3ecdc;
+      --accent: #e08a5b;
+      --accent-glow: rgba(224, 138, 91, 0.16);
+      --accent-light: #eda379;
+      --teal: #83ad95;
+      --teal-dim: rgba(131, 173, 149, 0.14);
+      --gold: #d1a868;
+      --gold-bg: rgba(209, 168, 104, 0.13);
+      --silver: #a79c87;
+      --silver-bg: rgba(167, 156, 135, 0.12);
+      --bronze: #b9865a;
+      --bronze-bg: rgba(185, 134, 90, 0.13);
+      --dim: #4a4030;
+      --film: #a487a0;
+      --film-bg: rgba(164, 135, 160, 0.14);
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 5px 18px rgba(0, 0, 0, 0.4);
     }
 
     body {
@@ -105,24 +105,25 @@ function buildSite(events, outputDir) {
       z-index: 1000;
     }
     #pin-gate .logo {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); font-weight: 500;
     }
     #pin-gate h1 {
-      font-size: 2.5rem; font-weight: 300; color: var(--text-bright);
-      letter-spacing: -0.02em;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 2.5rem; font-weight: 400; color: var(--text-bright);
+      letter-spacing: -0.01em;
     }
     #pin-gate h1 em { font-style: italic; color: var(--accent); }
     #pin-gate input {
       background: var(--bg-card); border: 1px solid var(--border);
       color: var(--text-bright); font-family: 'DM Mono', monospace;
       font-size: 1.75rem; text-align: center; letter-spacing: 0.5em;
-      padding: 0.75rem 1.5rem; border-radius: 8px; width: 180px;
+      padding: 0.75rem 1.5rem; border-radius: 6px; width: 180px;
       outline: none; transition: border-color 0.2s;
     }
     #pin-gate input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-    #pin-gate .error { color: #e04040; font-size: 0.8rem; }
+    #pin-gate .error { color: #a8453a; font-size: 0.8rem; }
     #pin-gate.hidden { display: none; }
 
     /* === Header === */
@@ -132,19 +133,19 @@ function buildSite(events, outputDir) {
       display: flex; justify-content: space-between; align-items: baseline;
     }
     .brand h1 {
-      font-size: 1.45rem; font-weight: 700; color: var(--text-bright);
-      letter-spacing: -0.03em;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.6rem; font-weight: 500; color: var(--text-bright);
+      letter-spacing: -0.01em;
     }
-    .brand h1 span { color: var(--accent); font-weight: 300; font-style: italic; }
+    .brand h1 span { color: var(--accent); font-weight: 400; font-style: italic; }
     .brand .tagline {
-      color: var(--text-dim); font-size: 0.78rem; margin-top: 0.15rem;
+      color: var(--text-dim); font-size: 0.78rem; margin-top: 0.2rem;
     }
     .brand .tagline a { color: var(--teal); text-decoration: none; }
     .brand .tagline a:hover { text-decoration: underline; }
     .header-right { display: flex; align-items: center; gap: 0.6rem; }
     .meta {
-      color: var(--text-dim); font-size: 0.7rem;
-      font-family: 'DM Mono', monospace;
+      color: var(--text-dim); font-size: 0.72rem;
     }
 
     /* === Controls === */
@@ -210,7 +211,7 @@ function buildSite(events, outputDir) {
       padding: 0.6rem 2rem 0.25rem;
       display: flex; gap: 1.5rem;
       font-size: 0.72rem; color: var(--text-dim);
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
     }
     .stats strong { color: var(--accent); font-weight: 500; }
 
@@ -229,11 +230,11 @@ function buildSite(events, outputDir) {
     }
     .day-header .day-name.tonight { color: var(--accent); }
     .day-header .day-date {
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
       font-size: 0.7rem; color: var(--text-dim);
     }
     .day-header .day-count {
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
       font-size: 0.7rem; color: var(--text-dim); margin-left: auto;
     }
 
@@ -281,7 +282,7 @@ function buildSite(events, outputDir) {
 
     .badge {
       flex-shrink: 0;
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
       font-size: 0.68rem; font-weight: 500;
       padding: 0.15rem 0.45rem; border-radius: 5px;
       min-width: 2rem; text-align: center;
@@ -341,7 +342,7 @@ function buildSite(events, outputDir) {
     .events-list .row.gold .title-line, .events-list .row.silver .title-line { font-weight: 700; }
 
     .row .score {
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
       font-size: 0.72rem; font-weight: 500;
       text-align: right;
     }
@@ -352,7 +353,7 @@ function buildSite(events, outputDir) {
     .row .score.film-score { color: var(--film); }
 
     .row .time-col {
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
       font-size: 0.68rem; color: var(--text-dim);
       white-space: nowrap; text-align: right;
     }
@@ -385,7 +386,7 @@ function buildSite(events, outputDir) {
     footer {
       text-align: center; padding: 2rem 2rem 2.5rem;
       color: var(--text-dim); font-size: 0.68rem;
-      font-family: 'DM Mono', monospace;
+      font-family: 'DM Sans', sans-serif; letter-spacing: 0.02em;
       line-height: 1.8;
     }
     footer a { color: var(--accent); text-decoration: none; }
@@ -401,7 +402,7 @@ function buildSite(events, outputDir) {
     .refresh-btn {
       background: transparent; border: 1px solid var(--border);
       color: var(--text-dim); padding: 0.3rem 0.7rem; border-radius: 20px;
-      cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.68rem; letter-spacing: 0.02em;
       transition: all 0.2s;
     }
     .refresh-btn:hover { color: var(--accent); border-color: var(--accent); }
@@ -428,7 +429,7 @@ function buildSite(events, outputDir) {
     }
     .modal-close:hover { color: var(--text); }
     .modal-badge {
-      font-family: 'DM Mono', monospace; font-size: 0.75rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.02em;
       display: inline-block; padding: 0.15rem 0.5rem; border-radius: 5px;
       margin-bottom: 0.75rem;
     }
@@ -484,7 +485,7 @@ function buildSite(events, outputDir) {
     .events-map.hidden { display: none; }
     .leaflet-popup-content { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; }
     .leaflet-popup-content strong { color: var(--accent); }
-    .map-popup-score { font-family: 'DM Mono', monospace; font-size: 0.7rem; }
+    .map-popup-score { font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums; font-size: 0.7rem; }
 
     .events-grid.hidden, .events-list.hidden { display: none; }
   </style>
@@ -579,7 +580,7 @@ function buildSite(events, outputDir) {
 
     // Theme
     function initTheme() {
-      const saved = localStorage.getItem('nyc-tonight-theme') || 'dark';
+      const saved = localStorage.getItem('nyc-tonight-theme') || 'light';
       document.documentElement.setAttribute('data-theme', saved);
       updateThemeIcon(saved);
     }
@@ -941,7 +942,7 @@ function buildSite(events, outputDir) {
 
       for (const v of Object.values(venues)) {
         const topScore = Math.max(...v.events.map(e => e.score));
-        const color = topScore >= 60 ? '#d4a02b' : topScore >= 40 ? '#d4622b' : '#4a9e8e';
+        const color = topScore >= 60 ? '#a87f2e' : topScore >= 40 ? '#b75b32' : '#5b8770';
         const radius = Math.max(6, Math.min(14, topScore / 5));
 
         const marker = L.circleMarker([v.lat, v.lng], {
@@ -991,11 +992,11 @@ function buildSite(events, outputDir) {
           } else {
             if (res.status === 401 || res.status === 403) localStorage.removeItem('nyc-tonight-gh-token');
             status.textContent = 'Error ' + res.status + ' — try again';
-            status.style.color = '#e04040';
+            status.style.color = '#a8453a';
           }
         } catch (err) {
           status.textContent = 'Network error';
-          status.style.color = '#e04040';
+          status.style.color = '#a8453a';
         }
         setTimeout(() => { btn.disabled = false; btn.textContent = '↻ refresh data'; }, 10000);
       } else {
