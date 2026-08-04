@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parents' Visit — NYC Tonight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { color-scheme: dark light; }
+
+    [data-theme="light"] {
+      --bg: #faf8f4;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f6f3ee;
+      --bg-inset: #f1ede6;
+      --border: #e7e2d9;
+      --border-soft: #efebe3;
+      --text: #46413a;
+      --text-dim: #97907f;
+      --text-bright: #1f1b16;
+      --accent: #bf4e18;
+      --accent-glow: rgba(191, 78, 24, 0.09);
+      --teal: #2d7a6c;
+      --gold: #a97c08;
+      --gold-bg: rgba(184, 134, 11, 0.09);
+      --silver: #6b7280;
+      --silver-bg: rgba(107, 114, 128, 0.07);
+      --bronze: #92631e;
+      --bronze-bg: rgba(146, 99, 30, 0.07);
+      --film: #6b5b95;
+      --film-bg: rgba(107, 91, 149, 0.09);
+      --shadow: 0 2px 12px rgba(60, 50, 30, 0.07);
+      --shadow-hover: 0 4px 18px rgba(60, 50, 30, 0.11);
+    }
+    [data-theme="dark"] {
+      --bg: #0d1017;
+      --bg-card: #131722;
+      --bg-card-hover: #191f2c;
+      --bg-inset: #10141d;
+      --border: #202636;
+      --border-soft: #1a1f2d;
+      --text: #c3c8d2;
+      --text-dim: #616a7e;
+      --text-bright: #edeff4;
+      --accent: #d4622b;
+      --accent-glow: rgba(212, 98, 43, 0.14);
+      --teal: #4a9e8e;
+      --gold: #d4a02b;
+      --gold-bg: rgba(212, 160, 43, 0.1);
+      --silver: #8892a4;
+      --silver-bg: rgba(136, 146, 164, 0.08);
+      --bronze: #a06830;
+      --bronze-bg: rgba(160, 104, 48, 0.08);
+      --film: #8474b8;
+      --film-bg: rgba(123, 104, 174, 0.12);
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+      --shadow-hover: 0 6px 22px rgba(0, 0, 0, 0.35);
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === PIN gate (shared session with the main dashboard) === */
+    #pin-gate {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1.5rem;
+      z-index: 1000;
+    }
+    #pin-gate .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    #pin-gate h1 {
+      font-size: 2.1rem; font-weight: 300; color: var(--text-bright);
+      letter-spacing: -0.02em; text-align: center;
+    }
+    #pin-gate h1 em { font-style: italic; color: var(--accent); }
+    #pin-gate input {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-bright); font-family: 'DM Mono', monospace;
+      font-size: 1.75rem; text-align: center; letter-spacing: 0.5em;
+      padding: 0.6rem 0.4rem; width: 10rem; border-radius: 10px; outline: none;
+    }
+    #pin-gate input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    #pin-gate .error { color: #e04040; font-size: 0.8rem; min-height: 1em; }
+    #pin-gate.hidden { display: none; }
+
+    /* === Header === */
+    header {
+      padding: 2.25rem 2rem 0.5rem;
+      max-width: 800px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .brand h1 {
+      font-size: 1.45rem; font-weight: 700; color: var(--text-bright);
+      letter-spacing: -0.03em;
+    }
+    .brand h1 span { color: var(--accent); font-weight: 300; font-style: italic; }
+    .brand .tagline {
+      color: var(--text-dim); font-size: 0.78rem; margin-top: 0.15rem;
+    }
+    .brand .tagline a { color: var(--teal); text-decoration: none; }
+    .brand .tagline a:hover { text-decoration: underline; }
+    .header-right { display: flex; align-items: center; gap: 0.6rem; }
+    .theme-toggle {
+      background: transparent; border: 1px solid var(--border); border-radius: 50%;
+      width: 2rem; height: 2rem; cursor: pointer; font-size: 0.95rem;
+      color: var(--text); display:flex; align-items:center; justify-content:center;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+
+    main {
+      max-width: 800px; margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    .lede {
+      padding: 1.6rem 0 0.5rem;
+      max-width: 60ch;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .lede p { margin: 0 0 0.7rem; }
+    .lede .note { color: var(--text-dim); font-size: 0.82rem; }
+
+    /* === Jump nav === */
+    .jump {
+      display: flex; gap: 0.4rem; flex-wrap: wrap;
+      padding: 1.1rem 0 1.6rem;
+      position: sticky; top: 0; background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(8px); z-index: 10;
+    }
+    .jump a {
+      font-family: 'DM Mono', monospace; font-size: 0.75rem;
+      color: var(--text-dim); text-decoration: none;
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 0.3rem 0.7rem;
+    }
+    .jump a:hover { border-color: var(--accent); color: var(--text); }
+    .jump a.gap { border-style: dashed; opacity: .55; }
+
+    /* === Day sections === */
+    .day-header {
+      display: flex; align-items: baseline; gap: 0.6rem;
+      padding: 1.8rem 0 0.6rem;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 0.7rem;
+      scroll-margin-top: 4rem;
+    }
+    .day-header .day-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.3rem; font-weight: 700; color: var(--accent);
+    }
+    .day-header .day-name {
+      font-size: 1rem; font-weight: 700; color: var(--text-bright);
+    }
+    .day-header .day-flag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; color: var(--gold);
+      margin-left: auto; text-align: right;
+    }
+    .day-vibe { color: var(--text-dim); font-size: 0.86rem; margin: -0.3rem 0 0.9rem; max-width: 58ch; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 0.95rem 1.1rem;
+      margin-bottom: 0.65rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 66px 1fr;
+      gap: 0.9rem;
+    }
+    .card .when {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; color: var(--text-dim);
+      padding-top: 0.15rem;
+    }
+    .card .rank {
+      display: block; font-weight: 700; font-size: 0.85rem; color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+    .card h3 { font-size: 1.02rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.15rem; }
+    .card .venue { font-size: 0.8rem; font-weight: 600; color: var(--teal); margin-bottom: 0.35rem; }
+    .card p { font-size: 0.87rem; margin-bottom: 0.35rem; }
+    .card .tip { font-size: 0.78rem; color: var(--text-dim); font-style: italic; }
+    .tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.35rem; }
+    .tag {
+      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 0.1rem 0.5rem; border-radius: 999px;
+      background: var(--bg-inset); color: var(--text-dim);
+    }
+    .tag.jazz { background: var(--teal-dim, rgba(74,158,142,.12)); color: var(--teal); }
+    .tag.pop { background: var(--bg-inset); color: var(--text); }
+    .tag.rare { background: var(--gold-bg); color: var(--gold); }
+    .tag.classical { background: var(--film-bg); color: var(--film); }
+    .tag.sport { background: var(--silver-bg); color: var(--silver); }
+    .tag.festival { background: var(--bronze-bg); color: var(--bronze); }
+    .tag.theatre { background: var(--film-bg); color: var(--film); }
+
+    .gapnote {
+      padding: 0.9rem 0 1.6rem;
+      color: var(--text-dim); font-size: 0.82rem; font-style: italic;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 0.7rem;
+    }
+
+    footer {
+      max-width: 800px; margin: 0 auto;
+      padding: 1.6rem 2rem 3rem;
+      color: var(--text-dim); font-size: 0.78rem; max-width: 58ch;
+    }
+    footer p { margin-bottom: 0.6rem; }
+    footer a { color: var(--teal); }
+
+    @media (max-width: 600px) {
+      .card { grid-template-columns: 48px 1fr; }
+      header, main, footer { padding-left: 1.1rem; padding-right: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="pin-gate">
+    <div class="logo">nyc tonight</div>
+    <h1>Your parents' <em>seven nights</em></h1>
+    <input type="password" id="pin-input" maxlength="4" placeholder="· · · ·" autofocus>
+    <div class="error" id="pin-error"></div>
+  </div>
+
+  <div id="app" style="display:none">
+    <header>
+      <div class="brand">
+        <h1>NYC <span>Tonight</span></h1>
+        <div class="tagline"><a href="index.html">← all events</a> · Sep 2–5 &amp; 10–12, 2026</div>
+      </div>
+      <div class="header-right">
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="lede">
+        <p>The stretch of your parents' visit that's actually free — trimmed to Sep 2–5 and 10–12 (skipping the 6th–9th, and the 13th is a travel day). Same ranking logic as the full dashboard: jazz-club bookings are real, scraped listings; everything else — arenas, Lincoln Center, civic events — checked directly against venue calendars.</p>
+        <p class="note">Six weeks out, arena and Broadway lineups can still shift slightly. Jazz clubs and civic events (the Phil, US Open) are locked in.</p>
+      </div>
+
+      <nav class="jump">
+        <a href="#d02">Sep 2</a>
+        <a href="#d03">Sep 3</a>
+        <a href="#d04">Sep 4</a>
+        <a href="#d05">Sep 5</a>
+        <a class="gap" href="#" onclick="return false">6–9 skipped</a>
+        <a href="#d10">Sep 10</a>
+        <a href="#d11">Sep 11</a>
+        <a href="#d12">Sep 12</a>
+      </nav>
+
+      <!-- SEP 2 -->
+      <div class="day-header" id="d02">
+        <span class="day-date">Sep 2</span>
+        <span class="day-name">Wednesday</span>
+      </div>
+      <p class="day-vibe">Arrival night: the most iconic jazz basement in the world, a five-night-only Ginsberg tribute floating on the Hudson, and — if they want something huge — Harry Styles at the Garden.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>8 &amp; 10pm</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag jazz">jazz</span></div>
+          <h3>John Patitucci Trio</h3>
+          <div class="venue">Village Vanguard</div>
+          <p>One of the great bassists alive, in the most storied jazz room on Earth — a converted basement unchanged since 1935, no talking, no bad seats.</p>
+          <p class="tip">Tiny room, no reservations once the set starts — get there early.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag">underground</span></div>
+          <h3>Thomas Bartlett: <em>Allen Ginsberg at 100</em>, with Rufus Wainwright</h3>
+          <div class="venue">The Amph at Little Island</div>
+          <p>Five nights only — songs and spoken word built from Ginsberg's poetry, staged in a floating amphitheater over the Hudson, rotating guests (Laurie Anderson, Anne Waldman) all week. Tonight: Rufus Wainwright.</p>
+          <p class="tip">$25 tickets, small venue — books up fast.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span><span class="tag">free</span></div>
+          <h3>Verve Records 70th Anniversary, feat. Christian McBride</h3>
+          <div class="venue">SummerStage, Central Park</div>
+          <p>Free outdoor show closing SummerStage's summer season.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag pop">pop</span></div>
+          <h3>Harry Styles, with Jamie xx</h3>
+          <div class="venue">Madison Square Garden</div>
+          <p>Part of a 30-show residency (Wed/Fri/Sat through October) — his only US dates this year.</p>
+        </div>
+      </div>
+
+      <!-- SEP 3 -->
+      <div class="day-header" id="d03">
+        <span class="day-date">Sep 3</span>
+        <span class="day-name">Thursday</span>
+      </div>
+      <p class="day-vibe">Night two of the Ginsberg run, plus a rare club date from British electronic royalty in a converted Queens glass factory.</p>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span></div>
+          <h3><em>Allen Ginsberg at 100</em>, with Bill Frisell</h3>
+          <div class="venue">The Amph at Little Island</div>
+          <p>Same run, tonight's guest is Bill Frisell — the most quietly influential jazz guitarist of the last 40 years.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">night</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag">underground</span></div>
+          <h3>Underworld</h3>
+          <div class="venue">Knockdown Center, Queens</div>
+          <p>The duo behind "Born Slippy," playing a converted early-1900s door factory that's become one of the best-sounding rooms in the city. Two nights only (also the 4th).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8 &amp; 10pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>John Patitucci Trio</h3>
+          <div class="venue">Village Vanguard</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Ronnie Foster Trio</h3>
+          <div class="venue">Dizzy's Club, Jazz at Lincoln Center</div>
+          <p>Hammond B3 legend, in a glass-walled room over Columbus Circle.</p>
+        </div>
+      </div>
+
+      <!-- SEP 4 -->
+      <div class="day-header" id="d04">
+        <span class="day-date">Sep 4</span>
+        <span class="day-name">Friday</span>
+      </div>
+      <p class="day-vibe">A one-of-a-kind free civic theater piece opens in Central Park, and Robyn plays Radio City. One of the richer nights of the whole stay.</p>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag theatre">theatre</span><span class="tag">free</span></div>
+          <h3>Public Works: <em>Public Record</em> — opening night</h3>
+          <div class="venue">Delacorte Theater, Central Park</div>
+          <p>More than 100 New Yorkers — real community members, not professional actors — recording a live "album" on the Delacorte stage. Nothing else in American theater looks like this. Runs through the 8th.</p>
+          <p class="tip">Free, lottery/rush distribution — check the Public Theater site.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag pop">pop</span></div>
+          <h3>Robyn</h3>
+          <div class="venue">Radio City Music Hall</div>
+          <p>A genuine pop icon in one of the most beautiful Art Deco rooms in the country.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag pop">pop</span></div>
+          <h3>Harry Styles, with Jamie xx</h3>
+          <div class="venue">Madison Square Garden</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Ann Hampton Callaway — <em>I Get a Kick Out of Cole</em></h3>
+          <div class="venue">Dizzy's Club</div>
+          <p>Cole Porter songbook show, runs through the 6th.</p>
+        </div>
+      </div>
+
+      <!-- SEP 5 -->
+      <div class="day-header" id="d05">
+        <span class="day-date">Sep 5</span>
+        <span class="day-name">Saturday</span>
+      </div>
+      <p class="day-vibe">Last night of the Patitucci stand, plus a genuinely underground Harlem option and a distillery jazz brunch by day.</p>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag pop">pop</span></div>
+          <h3>Harry Styles, with Jamie xx</h3>
+          <div class="venue">Madison Square Garden</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag theatre">theatre</span><span class="tag">free</span></div>
+          <h3>Public Works: <em>Public Record</em></h3>
+          <div class="venue">Delacorte Theater, Central Park</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8 &amp; 10pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>John Patitucci Trio — final night</h3>
+          <div class="venue">Village Vanguard</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span><span class="tag">underground</span></div>
+          <h3>Bill Saxton &amp; The Harlem All-Stars</h3>
+          <div class="venue">Bill's Place, Harlem</div>
+          <p>A speakeasy-style room run out of a Harlem brownstone basement, BYOB, near where Billie Holiday was reportedly discovered. As underground as it gets.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">noon</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Saturday Jazz Brunch</h3>
+          <div class="venue">Great Jones Distilling Co.</div>
+          <p>Live jazz brunch inside a working whiskey distillery.</p>
+        </div>
+      </div>
+
+      <div class="gapnote">— Sep 6–9 skipped for this itinerary (Little Island's Ginsberg run and Public Record both close the 6th; Labor Day / West Indian Day Parade falls the 7th if you change your mind) —</div>
+
+      <!-- SEP 10 -->
+      <div class="day-header" id="d10">
+        <span class="day-date">Sep 10</span>
+        <span class="day-name">Thursday</span>
+      </div>
+      <p class="day-vibe">Probably the single biggest classical-music night in the city all year.</p>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag classical">classical</span></div>
+          <h3>New York Philharmonic — season-opening gala: Gustavo Dudamel's inaugural concert</h3>
+          <div class="venue">Radio City Music Hall</div>
+          <p>Dudamel's first concert as the Philharmonic's Music &amp; Artistic Director — a historic changing-of-the-guard for one of the world's great orchestras. This happens once a decade, not once a season.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag festival">festival</span><span class="tag">free</span></div>
+          <h3>SummerStage 40th Anniversary Celebration</h3>
+          <div class="venue">Central Park</div>
+          <p>One-night-only free concert marking four decades of the series.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8 &amp; 10pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Bill Charlap Trio</h3>
+          <div class="venue">Village Vanguard</div>
+          <p>Mid-way through a week-long stand from one of the great living jazz pianists.</p>
+        </div>
+      </div>
+
+      <!-- SEP 11 -->
+      <div class="day-header" id="d11">
+        <span class="day-date">Sep 11</span>
+        <span class="day-name">Friday</span>
+        <span class="day-flag">25 years since 9/11</span>
+      </div>
+      <p class="day-vibe">A heavier, more reflective night by design. Worth deciding in advance whether to mark the day or keep it light — both are listed.</p>
+
+      <div class="card">
+        <div class="when">dusk–dawn</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag">free</span></div>
+          <h3>Tribute in Light — 25th anniversary</h3>
+          <div class="venue">Lower Manhattan, visible citywide</div>
+          <p>Two vertical beams standing in for the Twin Towers, lit dusk to dawn, visible up to 60 miles. Quiet and extraordinary from any elevated spot — a rooftop, the Brooklyn Bridge, a park bench.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag classical">classical</span></div>
+          <h3>NY Philharmonic memorial concert — John Adams' <em>On the Transmigration of Souls</em></h3>
+          <div class="venue">Perelman Performing Arts Center (World Trade Center site)</div>
+          <p>A memorial performance in the hall built directly on the WTC site, the day after Dudamel's inaugural gala.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag pop">pop</span></div>
+          <h3>Harry Styles, with Jamie xx — the lighter option</h3>
+          <div class="venue">Madison Square Garden</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8 &amp; 10pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Bill Charlap Trio</h3>
+          <div class="venue">Village Vanguard</div>
+        </div>
+      </div>
+
+      <!-- SEP 12 -->
+      <div class="day-header" id="d12">
+        <span class="day-date">Sep 12</span>
+        <span class="day-name">Saturday</span>
+        <span class="day-flag">US Open finals</span>
+      </div>
+      <p class="day-vibe">The US Open women's final — one of the loudest single-day tickets in American sports, only here two weeks a year.</p>
+
+      <div class="card">
+        <div class="when">afternoon</div>
+        <div>
+          <div class="tags"><span class="tag rare">rare</span><span class="tag sport">sport</span></div>
+          <h3>US Open — Women's Singles Final</h3>
+          <div class="venue">Arthur Ashe Stadium, Flushing Meadows</div>
+          <p>Ashe Stadium on a final is one of the great single-day live-event experiences in the city. (The men's final is the 13th, after your window here.)</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8pm</div>
+        <div>
+          <div class="tags"><span class="tag pop">pop</span></div>
+          <h3>Harry Styles, with Jamie xx</h3>
+          <div class="venue">Madison Square Garden</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">evening</div>
+        <div>
+          <div class="tags"><span class="tag">free</span></div>
+          <h3>Marcus King Band</h3>
+          <div class="venue">SummerStage, Central Park</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">8 &amp; 10pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Bill Charlap Trio</h3>
+          <div class="venue">Village Vanguard</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when">noon</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3>Saturday Jazz Brunch</h3>
+          <div class="venue">Great Jones Distilling Co.</div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p><b>On booking:</b> Village Vanguard, Dizzy's, and Little Island seat small rooms and sell out — book the specific night as soon as it's chosen. MSG/Radio City and Broadway can wait. US Open tickets are the scarcest thing here; watch resale early if that's a priority.</p>
+      <p>Jazz listings pulled from the same live club-calendar scrape as the main dashboard; everything else checked against venue and news sources directly. See the <a href="index.html">full dashboard</a> for every other night of the visit, including the 6th–9th and 13th.</p>
+    </footer>
+  </div>
+
+  <script>
+    const PIN = '7429';
+
+    function initTheme() {
+      const saved = localStorage.getItem('nyc-tonight-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      updateThemeIcon(saved);
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('nyc-tonight-theme', next);
+      updateThemeIcon(next);
+    }
+    function updateThemeIcon(theme) {
+      const btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = theme === 'dark' ? '☀' : '🌙';
+    }
+    initTheme();
+
+    const gate = document.getElementById('pin-gate');
+    const pinInput = document.getElementById('pin-input');
+    const pinError = document.getElementById('pin-error');
+
+    if (localStorage.getItem('nyc-tonight-auth') === 'ok') {
+      gate.classList.add('hidden');
+      document.getElementById('app').style.display = 'block';
+    }
+
+    pinInput.addEventListener('input', function() {
+      if (this.value.length === 4) {
+        if (this.value === PIN) {
+          localStorage.setItem('nyc-tonight-auth', 'ok');
+          gate.classList.add('hidden');
+          document.getElementById('app').style.display = 'block';
+        } else {
+          pinError.textContent = 'nope';
+          this.value = '';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -139,6 +139,8 @@ function buildSite(events, outputDir) {
     .brand .tagline {
       color: var(--text-dim); font-size: 0.78rem; margin-top: 0.15rem;
     }
+    .brand .tagline a { color: var(--teal); text-decoration: none; }
+    .brand .tagline a:hover { text-decoration: underline; }
     .header-right { display: flex; align-items: center; gap: 0.6rem; }
     .meta {
       color: var(--text-dim); font-size: 0.7rem;
@@ -499,7 +501,7 @@ function buildSite(events, outputDir) {
     <header>
       <div class="brand">
         <h1>NYC <span>Tonight</span></h1>
-        <div class="tagline">events across the city, scored to your taste</div>
+        <div class="tagline">events across the city, scored to your taste · <a href="parents-visit.html">parents' visit guide →</a></div>
       </div>
       <div class="header-right">
         <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀</button>
