@@ -44,6 +44,25 @@ underrepresented relative to jazz and electronic. Options, cheapest first:
    restricted to artists and their representatives; a non-artist request goes
    to biz@bandsintown.com and may be declined. Treat as unlikely.
 
+### A caveat on resale marketplaces
+
+Resellers index *ticketed inventory*, which is a different population from what
+this dashboard is for. They are strong on arenas and mid-size rooms and close
+to blind on the long tail the taste profile actually rewards — Village Vanguard
+sets, Bill's Place, Smalls, repertory screenings, free and door-only shows.
+Worth adding for coverage of touring acts; not a substitute for the venue and
+listings scrapers.
+
+- **SeatGeek** — the one resale-side aggregator with a genuinely open API, and
+  the reason it is ranked second above. Already implemented.
+- **StubHub** — has a documented API but no self-service signup. Access goes
+  through affiliates@stubhub.com (buyer-facing apps, via the Partnerize
+  affiliate programme) or api.support@stubhub.com (seller-facing tools), with
+  roughly 24–48h for approval. Viable only if you want to apply as an affiliate;
+  it would largely duplicate Ticketmaster + SeatGeek coverage.
+- **Vivid Seats, TickPick, Gametime** — affiliate/partner arrangements only, no
+  open catalogue endpoint.
+
 ## Investigated, not viable (2026-07/08)
 
 - **DICE** — `unified_search` API responds but no request shape found that

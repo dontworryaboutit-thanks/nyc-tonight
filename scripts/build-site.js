@@ -20,6 +20,11 @@ function buildSite(events, outputDir) {
   // Events below this taste score are hidden unless the user opts back in.
   const MIN_SCORE_DEFAULT = 30;
 
+  // Bound the date picker to the range we actually hold data for, so the
+  // calendar can't offer a day that is guaranteed to be empty.
+  const datedDays = events.map(e => e.date).filter(Boolean).sort();
+  const lastDate = datedDays.length ? datedDays[datedDays.length - 1] : todayNY;
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -177,6 +182,40 @@ function buildSite(events, outputDir) {
     }
     .pill.teal.active { background: var(--teal); border-color: var(--teal); }
     .pill.film.active { background: var(--film); border-color: var(--film); }
+
+    /* === Date picker === */
+    .datepick {
+      display: inline-flex; align-items: center; gap: 0.15rem;
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 0 0.35rem 0 0.6rem;
+      background: transparent;
+      transition: border-color 0.15s;
+    }
+    .datepick:hover { border-color: var(--accent); }
+    .datepick:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .datepick input[type="date"] {
+      background: transparent; border: none; outline: none;
+      color: var(--text-dim); font-family: inherit; font-size: 0.75rem;
+      padding: 0.3rem 0; width: 6.6rem;
+      color-scheme: light dark;
+    }
+    .datepick input[type="date"].has-date { color: var(--accent); font-weight: 500; }
+    /* The native indicator is a dark glyph that disappears on the dark ground */
+    .datepick input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer; opacity: 0.5; filter: grayscale(1);
+    }
+    .datepick input[type="date"]:hover::-webkit-calendar-picker-indicator { opacity: 0.9; }
+    /* The glyph ships dark, which disappears against the dark ground */
+    [data-theme="dark"] .datepick input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1) grayscale(1);
+    }
+    .date-clear {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-dim); font-size: 1rem; line-height: 1;
+      padding: 0 0.15rem;
+    }
+    .date-clear:hover { color: var(--accent); }
+    .date-clear[hidden] { display: none; }
 
     .pill-group {
       display: flex; gap: 0.35rem; align-items: center;
@@ -557,6 +596,10 @@ function buildSite(events, outputDir) {
           <button class="pill active" data-range="week">Next 7 days</button>
           <button class="pill" data-range="tonight">Tonight</button>
           <button class="pill" data-range="all">Everything</button>
+          <label class="datepick" title="Jump to a specific date">
+            <input type="date" id="date-pick" min="${todayNY}" max="${lastDate}" aria-label="Jump to a specific date">
+            <button type="button" class="date-clear" id="date-clear" aria-label="Clear the selected date" hidden>&times;</button>
+          </label>
         </div>
         <div class="pill-group">
           <button class="pill active" data-filter="all">All</button>
@@ -624,6 +667,7 @@ function buildSite(events, outputDir) {
     let lastFiltered = [];
     const MIN_SCORE = ${MIN_SCORE_DEFAULT};
     let goodOnly = true;
+    let pickedDate = ''; // set by the date picker; overrides the range pills
 
     // Theme
     function initTheme() {
@@ -678,13 +722,51 @@ function buildSite(events, outputDir) {
       });
     });
 
+    const datePick = document.getElementById('date-pick');
+    const dateClear = document.getElementById('date-clear');
+
+    // A picked date and a range pill answer the same question, so choosing one
+    // always releases the other rather than leaving both looking active.
+    function clearPickedDate(rerender) {
+      if (!pickedDate) return;
+      pickedDate = '';
+      datePick.value = '';
+      datePick.classList.remove('has-date');
+      dateClear.hidden = true;
+      if (rerender) renderAll();
+    }
+
     document.querySelectorAll('[data-range]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('[data-range]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentRange = btn.dataset.range;
+        clearPickedDate(false);
         renderAll();
       });
+    });
+
+    datePick.addEventListener('change', function() {
+      pickedDate = this.value || '';
+      if (pickedDate) {
+        document.querySelectorAll('[data-range]').forEach(b => b.classList.remove('active'));
+        this.classList.add('has-date');
+        dateClear.hidden = false;
+      } else {
+        clearPickedDate(false);
+        // Falling back to a range needs one pill lit again
+        const active = document.querySelector('[data-range="' + currentRange + '"]');
+        if (active) active.classList.add('active');
+      }
+      renderAll();
+    });
+
+    dateClear.addEventListener('click', e => {
+      e.preventDefault();
+      clearPickedDate(false);
+      const active = document.querySelector('[data-range="' + currentRange + '"]');
+      if (active) active.classList.add('active');
+      renderAll();
     });
 
     document.getElementById('good-only').addEventListener('change', function() {
@@ -723,8 +805,13 @@ function buildSite(events, outputDir) {
       if (goodOnly) f = f.filter(e => (e.score || 0) >= MIN_SCORE);
       if (currentFilter !== 'all') f = f.filter(e => e.type === currentFilter);
 
-      // Range: dateless films count as "now showing" and appear in every range
-      if (currentRange === 'tonight') {
+      // Range: dateless films count as "now showing" and appear in every range.
+      // A picked date is the exception — asking "what is on the 28th" and being
+      // handed 75 undated repertory films buries the seven real answers, so
+      // dateless entries are dropped rather than padding the day out.
+      if (pickedDate) {
+        f = f.filter(e => e.date === pickedDate);
+      } else if (currentRange === 'tonight') {
         f = f.filter(e => !e.date ? e.type === 'film' : e.date === TODAY);
       } else if (currentRange === 'week') {
         const end = addDays(TODAY, 7);
