@@ -4,29 +4,41 @@ const cheerio = require('cheerio');
 const BASE_URL = 'https://donyc.com';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function mapType(category, eventName = '') {
+// Cinema venues: DoNYC files screenings under its music date pages, so the
+// venue is the only reliable signal that an event is actually a film.
+const CINEMA_VENUES = /film forum|metrograph|ifc center|anthology film|nitehawk|alamo drafthouse|angelika|paris theater|roxy cinema|museum of the moving image|bam rose|quad cinema|village east|syndicated|light industry/i;
+
+function mapType(category, eventName = '', venueName = '') {
   const nameLower = eventName.toLowerCase();
-  
-  if (category === 'comedy') return 'cultural';
-  if (category === 'film') return 'film';
-  if (category === 'theatre') return 'cultural';
-  
+  const catLower = String(category).toLowerCase();
+
+  // Category match must be substring-based: the scraper passes DoNYC's real
+  // category slugs ('film-screenings', 'theatre-art-design'), not bare words.
+  if (catLower.includes('comedy')) return 'cultural';
+  if (catLower.includes('film')) return 'film';
+  if (catLower.includes('theatre') || catLower.includes('theater')) return 'cultural';
+
+  // Venue is a stronger signal than the name for screenings pulled from the
+  // music pages ("Twister", "Spider-Man" carry no film-ish keywords).
+  if (CINEMA_VENUES.test(venueName)) return 'film';
+
   // Heuristics based on event name
   if (nameLower.includes('comedy') || nameLower.includes('stand up')) return 'cultural';
   if (nameLower.includes('film') || nameLower.includes('screening')) return 'film';
   if (nameLower.includes('theatre') || nameLower.includes('play') || nameLower.includes('broadway')) return 'cultural';
-  
+
   return 'music';
 }
 
-function mapGenre(category, eventName = '') {
+function mapGenre(category, eventName = '', venueName = '') {
   const nameLower = eventName.toLowerCase();
   const catLower = String(category).toLowerCase();
-  
+
   if (catLower.includes('comedy')) return 'comedy';
   if (catLower.includes('film')) return 'film';
   if (catLower.includes('theatre') || catLower.includes('theater')) return 'theatre';
-  
+  if (CINEMA_VENUES.test(venueName)) return 'film';
+
   if (nameLower.includes('jazz')) return 'jazz';
   if (nameLower.includes('indie')) return 'indie';
   if (nameLower.includes('rock')) return 'rock';
@@ -128,6 +140,16 @@ async function parseEventsFromPage(url, category) {
     const eventUrl = href.startsWith('http') ? href : `${BASE_URL}${href}`;
     const date = parseDateFromUrl(href);
     const time = parseTime(timeStr);
+
+    // Listing thumbnails: lazy-loaded images keep the real URL in data-src
+    let image = '';
+    const imgEl = parent.find('img').first();
+    if (imgEl.length) {
+      const src = imgEl.attr('data-src') || imgEl.attr('src') || '';
+      if (src && !/placeholder|blank|spacer|\.svg$/i.test(src)) {
+        image = src.startsWith('http') ? src : (src.startsWith('//') ? `https:${src}` : `${BASE_URL}${src}`);
+      }
+    }
     
     // Extract artist from event name
     const artistName = eventName.split(':')[0].split(' at ')[0].split('/')[0].split(' presents')[0].split(' - ')[0].split(' with ')[0].split(' ft.')[0].split(' featuring')[0].trim();
@@ -142,8 +164,9 @@ async function parseEventsFromPage(url, category) {
       time: time,
       url: eventUrl,
       source: 'donyc',
-      type: mapType(category, eventName),
-      genre: mapGenre(category, eventName)
+      type: mapType(category, eventName, venueName),
+      genre: mapGenre(category, eventName, venueName),
+      image
     });
   });
   

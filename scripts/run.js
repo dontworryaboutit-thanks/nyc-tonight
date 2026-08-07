@@ -19,6 +19,7 @@ async function main() {
     { name: 'ifc', mod: require('./scrapers/ifc') },
     { name: 'anthology', mod: require('./scrapers/anthology') },
     { name: 'nitehawk', mod: require('./scrapers/nitehawk') },
+    { name: 'screenslate', mod: require('./scrapers/screenslate') },
     { name: 'theskint', mod: require('./scrapers/theskint') },
     // Oh My Rockness: API domain gone, site bot-blocked (checked 2026-07)
     // { name: 'ohmyrockness', mod: require('./scrapers/ohmyrockness') },

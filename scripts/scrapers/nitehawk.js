@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const { pickImage } = require('./lib/pick-image');
 
 // Nitehawk restructured in 2026: /showtimes/ is gone. Each venue page shows
 // one day's films as .show-thumbnail-holder blocks, with per-date pages at
@@ -49,6 +50,8 @@ function parseDayPage(html, loc, date) {
 
     const time = firstShowtime($el.parent().text());
 
+    const image = pickImage($, $el, loc.base);
+
     events.push({
       name: title.replace(/\s*\((DCP|35MM|16MM|4K)\)\s*$/i, '').trim(),
       artists: [],
@@ -57,6 +60,7 @@ function parseDayPage(html, loc, date) {
       time,
       url: url || `${loc.base}/`,
       source: 'nitehawk',
+      image,
       genre: 'film',
       subGenre: '',
       type: 'film',

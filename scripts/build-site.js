@@ -17,6 +17,9 @@ function buildSite(events, outputDir) {
   const sources = [...new Set(events.map(e => e.source))].sort();
   const eventsJson = JSON.stringify(events);
 
+  // Events below this taste score are hidden unless the user opts back in.
+  const MIN_SCORE_DEFAULT = 30;
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,7 +117,7 @@ function buildSite(events, outputDir) {
       font-size: 2.5rem; font-weight: 400; color: var(--text-bright);
       letter-spacing: -0.01em;
     }
-    #pin-gate h1 em { font-style: italic; color: var(--accent); }
+    #pin-gate h1 em { font-style: inherit; color: inherit; }
     #pin-gate input {
       background: var(--bg-card); border: 1px solid var(--border);
       color: var(--text-bright); font-family: 'DM Mono', monospace;
@@ -137,7 +140,7 @@ function buildSite(events, outputDir) {
       font-size: 1.6rem; font-weight: 500; color: var(--text-bright);
       letter-spacing: -0.01em;
     }
-    .brand h1 span { color: var(--accent); font-weight: 400; font-style: italic; }
+    .brand h1 span { color: inherit; font-weight: inherit; font-style: inherit; }
     .brand .tagline {
       color: var(--text-dim); font-size: 0.78rem; margin-top: 0.2rem;
     }
@@ -191,6 +194,38 @@ function buildSite(events, outputDir) {
     .search-box:focus { border-color: var(--accent); width: 200px; }
     .search-box::placeholder { color: var(--text-dim); }
 
+    /* === "Good stuff only" switch === */
+    .switch {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      cursor: pointer; user-select: none;
+      font-size: 0.75rem; color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .switch-track {
+      width: 1.85rem; height: 1.05rem; border-radius: 999px;
+      background: var(--bg-inset); border: 1px solid var(--border);
+      display: inline-flex; align-items: center; padding: 0 2px;
+      transition: background 0.18s, border-color 0.18s;
+      flex-shrink: 0;
+    }
+    .switch-thumb {
+      width: 0.72rem; height: 0.72rem; border-radius: 50%;
+      background: var(--text-dim);
+      transition: transform 0.18s, background 0.18s;
+    }
+    .switch input:checked + .switch-track {
+      background: var(--accent-glow); border-color: var(--accent);
+    }
+    .switch input:checked + .switch-track .switch-thumb {
+      transform: translateX(0.8rem); background: var(--accent);
+    }
+    .switch input:checked ~ .switch-label { color: var(--accent); font-weight: 500; }
+    .switch input:focus-visible + .switch-track {
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .switch:hover .switch-track { border-color: var(--accent); }
+
     .spacer { flex: 1; }
 
     .view-toggle {
@@ -214,6 +249,7 @@ function buildSite(events, outputDir) {
       font-family: 'DM Sans', sans-serif; font-variant-numeric: tabular-nums;
     }
     .stats strong { color: var(--accent); font-weight: 500; }
+    .stats .stat-muted { color: var(--text-dim); opacity: 0.8; }
 
     /* === Day headers === */
     .day-header {
@@ -264,8 +300,11 @@ function buildSite(events, outputDir) {
     .card-img {
       width: 100%; height: 140px; object-fit: cover;
       border-radius: 8px; margin-bottom: 0.6rem;
-      background: var(--border);
+      background: var(--bg-inset);
+      display: block;
     }
+    /* A broken poster URL should collapse, not leave a torn placeholder */
+    .card-img.img-failed { display: none; }
     .card.gold { box-shadow: inset 3px 0 0 var(--gold), var(--shadow); }
     .card.silver { box-shadow: inset 3px 0 0 var(--silver), var(--shadow); }
     .card.gold:hover { box-shadow: inset 3px 0 0 var(--gold), var(--shadow-hover); }
@@ -527,6 +566,12 @@ function buildSite(events, outputDir) {
         </div>
         <input type="search" class="search-box" id="search" placeholder="Search…" autocomplete="off">
 
+        <label class="switch" title="Hide events scoring below ${MIN_SCORE_DEFAULT} against your taste profile">
+          <input type="checkbox" id="good-only" checked>
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+          <span class="switch-label">Good stuff only</span>
+        </label>
+
         <div class="spacer"></div>
 
         <div class="view-toggle">
@@ -577,6 +622,8 @@ function buildSite(events, outputDir) {
     let currentView = 'list';
     let searchQuery = '';
     let lastFiltered = [];
+    const MIN_SCORE = ${MIN_SCORE_DEFAULT};
+    let goodOnly = true;
 
     // Theme
     function initTheme() {
@@ -640,6 +687,11 @@ function buildSite(events, outputDir) {
       });
     });
 
+    document.getElementById('good-only').addEventListener('change', function() {
+      goodOnly = this.checked;
+      renderAll();
+    });
+
     let searchTimer = null;
     document.getElementById('search').addEventListener('input', function() {
       clearTimeout(searchTimer);
@@ -668,6 +720,7 @@ function buildSite(events, outputDir) {
 
     function getFiltered() {
       let f = EVENTS;
+      if (goodOnly) f = f.filter(e => (e.score || 0) >= MIN_SCORE);
       if (currentFilter !== 'all') f = f.filter(e => e.type === currentFilter);
 
       // Range: dateless films count as "now showing" and appear in every range
@@ -689,8 +742,18 @@ function buildSite(events, outputDir) {
       return f;
     }
 
-    // Group by day (chronological), score-sorted within each day.
-    // Dateless films form a trailing "Now Showing" group.
+    // Group by day (chronological), then by start time within each day so a
+    // day reads as an evening in order. Events with no listed time sort last,
+    // and score breaks ties.
+    function byTimeThenScore(a, b) {
+      const ta = a.time || '';
+      const tb = b.time || '';
+      if (ta && tb && ta !== tb) return ta < tb ? -1 : 1;
+      if (ta && !tb) return -1;
+      if (!ta && tb) return 1;
+      return b.score - a.score;
+    }
+
     function groupByDay(events) {
       const byDay = new Map();
       const undated = [];
@@ -701,8 +764,9 @@ function buildSite(events, outputDir) {
       }
       const groups = [...byDay.keys()].sort().map(date => ({
         date,
-        events: byDay.get(date).sort((a, b) => b.score - a.score)
+        events: byDay.get(date).sort(byTimeThenScore)
       }));
+      // "Now Showing" has no times to order by, so keep it score-ranked.
       if (undated.length) {
         groups.push({ date: null, events: undated.sort((a, b) => b.score - a.score) });
       }
@@ -728,10 +792,15 @@ function buildSite(events, outputDir) {
 
       const tonight = filtered.filter(e => e.date === TODAY).length;
       const top = filtered.filter(e => e.tier === 'gold' || e.tier === 'silver').length;
+      // How many the score filter is holding back, so it never hides silently
+      const hidden = goodOnly
+        ? EVENTS.filter(e => (e.score || 0) < MIN_SCORE).length
+        : 0;
       document.getElementById('stats').innerHTML =
         '<span><strong>' + filtered.length + '</strong> events</span>' +
         '<span><strong>' + tonight + '</strong> tonight</span>' +
-        (top ? '<span><strong>' + top + '</strong> top picks</span>' : '');
+        (top ? '<span><strong>' + top + '</strong> top picks</span>' : '') +
+        (hidden ? '<span class="stat-muted">' + hidden + ' below score ' + MIN_SCORE + ' hidden</span>' : '');
 
       renderGrid(groups);
       renderList(groups);
@@ -760,11 +829,16 @@ function buildSite(events, outputDir) {
             ? allArtists.slice(0, 4).join(', ') + ' +' + (allArtists.length - 4) + ' more'
             : allArtists.join(', ');
           const timeStr = ev.time ? fmtTime(ev.time) : '';
-          const showImg = ev.image && ev.score >= 40;
           const isFree = ev.genre === 'free';
+          // Show art whenever a source gave us one. Sources that don't carry
+          // images fall back to a CSS-drawn tile, so rows stay even either way.
+          const imgHtml = ev.image
+            ? '<img class="card-img" src="' + esc(ev.image) + '" alt="" loading="lazy" decoding="async" ' +
+              'onerror="this.classList.add(\\'img-failed\\')">'
+            : '';
 
           return '<div class="card ' + tierClass + '" onclick="openModal(' + i + ')" style="cursor:pointer">' +
-            (showImg ? '<img class="card-img" src="' + esc(ev.image) + '" alt="" loading="lazy" onerror="this.remove()">' : '') +
+            imgHtml +
             '<div class="card-head">' +
               '<div class="card-title">' + esc(ev.name) + '</div>' +
               '<div class="badge ' + badgeClass + '">' + ev.score + '</div>' +
