@@ -32,6 +32,11 @@ async function main() {
   } else {
     console.log('(ticketmaster skipped — set TICKETMASTER_API_KEY to enable)');
   }
+  if (process.env.SEATGEEK_CLIENT_ID) {
+    scrapers.push({ name: 'seatgeek', mod: require('./scrapers/seatgeek') });
+  } else {
+    console.log('(seatgeek skipped — set SEATGEEK_CLIENT_ID to enable)');
+  }
   if (process.env.BANDSINTOWN_APP_ID) {
     scrapers.push({ name: 'bandsintown', mod: require('./scrapers/bandsintown') });
   } else {

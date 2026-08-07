@@ -155,12 +155,15 @@ function eventsFromHtml(html, date) {
   return out;
 }
 
-async function fetchDay(date) {
+async function fetchDay(date, verbose) {
   const compact = date.replace(/-/g, '');
   const candidates = [
     { kind: 'json', url: `${BASE}/api/listings/${compact}` },
+    { kind: 'json', url: `${BASE}/api/listings?date=${compact}` },
+    { kind: 'html', url: `${BASE}/listings?date=${compact}` },
     { kind: 'html', url: `${BASE}/listings?date=${date}` },
-    { kind: 'html', url: `${BASE}/listings/${date}` }
+    { kind: 'html', url: `${BASE}/listings/${date}` },
+    { kind: 'html', url: `${BASE}/listings` }
   ];
 
   for (const c of candidates) {
@@ -168,9 +171,14 @@ async function fetchDay(date) {
     try {
       res = await get(c.url);
     } catch (err) {
+      if (verbose) console.log(`[screenslate]   ${c.url} → ERROR ${err.message}`);
       continue;
     }
-    if (!res.ok) continue;
+
+    if (!res.ok) {
+      if (verbose) console.log(`[screenslate]   ${c.url} → HTTP ${res.status}`);
+      continue;
+    }
 
     if (c.kind === 'json') {
       try {
@@ -179,8 +187,9 @@ async function fetchDay(date) {
           console.log(`[screenslate] ${date}: ${events.length} via JSON ${c.url}`);
           return events;
         }
+        if (verbose) console.log(`[screenslate]   ${c.url} → 200 JSON but 0 parsed (${res.body.length}b)`);
       } catch {
-        // not JSON after all — fall through to the HTML candidates
+        if (verbose) console.log(`[screenslate]   ${c.url} → 200 but not JSON (${res.body.length}b)`);
       }
     } else {
       const events = eventsFromHtml(res.body, date);
@@ -188,10 +197,20 @@ async function fetchDay(date) {
         console.log(`[screenslate] ${date}: ${events.length} via HTML ${c.url}`);
         return events;
       }
+      if (verbose) {
+        // Surface the real class names so the selectors can be corrected
+        const classes = [...res.body.matchAll(/class="([^"]{3,60})"/g)]
+          .flatMap(m => m[1].split(/\s+/))
+          .filter(c => /listing|screening|film|event|venue|show|time/i.test(c));
+        const counts = {};
+        for (const cl of classes) counts[cl] = (counts[cl] || 0) + 1;
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 12);
+        console.log(`[screenslate]   ${c.url} → 200 HTML ${res.body.length}b, 0 parsed; classes: ${JSON.stringify(top)}`);
+      }
     }
   }
 
-  console.log(`[screenslate] ${date}: no events found (all strategies)`);
+  if (!verbose) console.log(`[screenslate] ${date}: no events found (all strategies)`);
   return [];
 }
 
@@ -202,7 +221,9 @@ async function scrape() {
   for (let i = 0; i < DAYS_AHEAD; i++) {
     const date = ymd(i);
     try {
-      all.push(...await fetchDay(date));
+      // Diagnose loudly on the first day only, so a failing run explains
+      // itself in the log without repeating the same dump ten times.
+      all.push(...await fetchDay(date, i === 0));
     } catch (err) {
       console.warn(`[screenslate] ${date} failed: ${err.message}`);
     }
