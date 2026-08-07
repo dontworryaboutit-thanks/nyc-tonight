@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 const BASE_URL = 'https://www.songkick.com/metro-areas/7644-us-new-york';
-const MAX_PAGES = 10; // 50 per page; backoff below decides where we really stop
+const MAX_PAGES = 4; // page 4 reliably 406s; 3 pages = 150 events is the ceiling
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -25,17 +25,14 @@ async function scrape() {
       
       let res = await fetch(url, { headers: HEADERS });
 
-      // Songkick starts returning 406/403 after a few quick pages rather than
-      // blocking outright, so a rejection is usually pace-related. Back off and
-      // try again before giving up — this is what lifts the ceiling past the
-      // first three pages.
+      // Page 4 answers 406 regardless of pacing: backing off 5s and then 12s
+      // was measured to make no difference, so 150 events (3 pages) is a hard
+      // pagination ceiling, not rate limiting. One retry is kept as cheap
+      // insurance against a transient blip; a second would just burn build time.
       if (!res.ok) {
-        for (const waitMs of [5000, 12000]) {
-          console.warn(`[songkick] Page ${page}: HTTP ${res.status}, backing off ${waitMs / 1000}s...`);
-          await sleep(waitMs);
-          res = await fetch(url, { headers: HEADERS });
-          if (res.ok) break;
-        }
+        console.warn(`[songkick] Page ${page}: HTTP ${res.status}, retrying once in 5s...`);
+        await sleep(5000);
+        res = await fetch(url, { headers: HEADERS });
       }
 
       if (!res.ok) {
@@ -98,7 +95,7 @@ async function scrape() {
       console.log(`[songkick] Page ${page}: ${jsonLdBlocks.length} events (${allEvents.length} total)`);
       
       if (jsonLdBlocks.length < 50) break; // last page
-      await sleep(4000); // 1.5s reliably tripped a 406 by page 4
+      await sleep(2500);
     }
     
     console.log(`[songkick] Done. Found ${allEvents.length} NYC events`);

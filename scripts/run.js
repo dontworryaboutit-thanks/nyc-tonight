@@ -19,7 +19,11 @@ async function main() {
     { name: 'ifc', mod: require('./scrapers/ifc') },
     { name: 'anthology', mod: require('./scrapers/anthology') },
     { name: 'nitehawk', mod: require('./scrapers/nitehawk') },
-    { name: 'screenslate', mod: require('./scrapers/screenslate') },
+    // Screen Slate: listings are client-rendered. /listings returns a ~22KB
+    // shell whose only content-ish class is "path-listings", and /api/listings
+    // 404s, so there is nothing for cheerio to read (checked 2026-08-07).
+    // Scraper kept in scrapers/screenslate.js for when an endpoint turns up.
+    // { name: 'screenslate', mod: require('./scrapers/screenslate') },
     { name: 'theskint', mod: require('./scrapers/theskint') },
     // Oh My Rockness: API domain gone, site bot-blocked (checked 2026-07)
     // { name: 'ohmyrockness', mod: require('./scrapers/ohmyrockness') },
