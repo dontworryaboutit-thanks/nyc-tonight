@@ -1,90 +1,103 @@
-// Diagnostic probe round 3: find the DICE request shape that returns events.
-// Run from CI (GitHub runner has open egress).
+// Diagnostic probe: learn the real request/response shape for candidate
+// sources. Run from CI (the GitHub runner has open egress; the dev sandbox
+// does not, so this is the only place these hosts are reachable).
+//
+//   Actions → "Test Build (branch)" → Run workflow → mode: probe
 
 const fetch = require('node-fetch');
 
 const UA_BROWSER =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
-function summarizeEvents(data) {
-  // Hunt for anything event-shaped anywhere in the response
-  const found = [];
-  function walk(obj, path) {
-    if (found.length > 3 || obj === null || typeof obj !== 'object') return;
-    if (Array.isArray(obj)) { obj.slice(0, 5).forEach((v, i) => walk(v, `${path}[${i}]`)); return; }
-    const keys = Object.keys(obj);
-    if ((obj.name || obj.title) && (obj.date || obj.dates || obj.start_date || obj.starts_at || obj.event)) {
-      found.push({ path, keys: keys.slice(0, 20), name: obj.name || obj.title });
-      return;
-    }
-    if (obj.type === 'event' && obj.event) {
-      found.push({ path, keys: Object.keys(obj.event).slice(0, 25), name: obj.event.name });
-      return;
-    }
-    for (const k of keys.slice(0, 30)) walk(obj[k], `${path}.${k}`);
-  }
-  walk(data, '$');
-  return found;
+function ymd(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
 }
 
-async function tryReq(label, url, opts = {}) {
+async function probe(label, url, opts = {}) {
   try {
     const res = await fetch(url, {
-      timeout: 20000,
+      timeout: 25000,
+      redirect: 'follow',
       ...opts,
-      headers: { 'User-Agent': UA_BROWSER, Accept: 'application/json', ...(opts.headers || {}) }
+      headers: { 'User-Agent': UA_BROWSER, ...(opts.headers || {}) }
     });
     const text = await res.text();
-    console.log(`\n### ${label}\n    ${opts.method || 'GET'} ${url}\n    status=${res.status} bytes=${text.length}`);
-    if (res.status !== 200) { console.log('    body:', text.slice(0, 200).replace(/\s+/g, ' ')); return; }
-    try {
-      const data = JSON.parse(text);
-      const top = Array.isArray(data) ? `[array len=${data.length}]` : Object.keys(data).slice(0, 12).join(', ');
-      console.log('    top keys:', top);
-      const events = summarizeEvents(data);
-      if (events.length) {
-        console.log('    EVENT-SHAPED OBJECTS FOUND:');
-        for (const e of events) console.log(`      at ${e.path}: "${e.name}" keys=[${e.keys.join(',')}]`);
-      } else {
-        console.log('    no event-shaped objects; sample:', text.slice(0, 350).replace(/\s+/g, ' '));
+    console.log(`\n### ${label}`);
+    console.log(`    GET ${url}`);
+    console.log(`    status=${res.status} bytes=${text.length} type=${res.headers.get('content-type')}`);
+
+    if (res.status !== 200) {
+      console.log('    body:', text.slice(0, 200).replace(/\s+/g, ' '));
+      return null;
+    }
+
+    const ct = res.headers.get('content-type') || '';
+    if (ct.includes('json')) {
+      try {
+        const data = JSON.parse(text);
+        console.log('    JSON top:', Array.isArray(data)
+          ? `array len=${data.length}`
+          : Object.keys(data).slice(0, 15).join(', '));
+        console.log('    sample:', JSON.stringify(Array.isArray(data) ? data[0] : data).slice(0, 600));
+      } catch {
+        console.log('    (declared json but failed to parse)');
       }
-    } catch { console.log('    not JSON; starts:', text.slice(0, 200).replace(/\s+/g, ' ')); }
+    } else {
+      // Show the structural skeleton so we can write real selectors
+      const classes = [...text.matchAll(/class="([^"]{3,80})"/g)]
+        .map(m => m[1])
+        .filter(c => /listing|screening|film|event|venue|show|time|series/i.test(c));
+      const counts = {};
+      for (const c of classes) for (const one of c.split(/\s+/)) counts[one] = (counts[one] || 0) + 1;
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 25);
+      console.log('    candidate classes:', JSON.stringify(top));
+      const jsonld = [...text.matchAll(/<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/g)];
+      console.log('    ld+json blocks:', jsonld.length);
+      if (jsonld.length) console.log('    ld+json sample:', jsonld[0][1].replace(/\s+/g, ' ').slice(0, 400));
+    }
+    return text;
   } catch (err) {
-    console.log(`\n### ${label}\n    ERROR: ${err.message}`);
+    console.log(`\n### ${label}\n    GET ${url}\n    ERROR ${err.message}`);
+    return null;
   }
 }
 
 async function main() {
-  console.log('=== DICE PROBE ROUND 3 ===');
-  const post = (label, body, headers = {}) =>
-    tryReq(label, 'https://api.dice.fm/unified_search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...headers },
-      body: JSON.stringify(body)
+  console.log('=== SCREENSLATE ===');
+  const d = ymd(0);
+  const compact = d.replace(/-/g, '');
+  await probe('screenslate listings (today)', 'https://www.screenslate.com/listings');
+  await probe('screenslate listings ?date=', `https://www.screenslate.com/listings?date=${d}`);
+  await probe('screenslate listings /date', `https://www.screenslate.com/listings/${d}`);
+  await probe('screenslate api compact', `https://www.screenslate.com/api/listings/${compact}`);
+  await probe('screenslate jsonapi node', 'https://www.screenslate.com/jsonapi/node/screening?page[limit]=5');
+
+  console.log('\n\n=== SONGKICK (is it actually bot-blocked?) ===');
+  await probe('songkick metro plain', 'https://www.songkick.com/metro-areas/7644-us-new-york');
+  await probe('songkick metro -nyc', 'https://www.songkick.com/metro-areas/7644-us-new-york-nyc');
+  await probe('songkick with full browser headers',
+    'https://www.songkick.com/metro-areas/7644-us-new-york', {
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Upgrade-Insecure-Requests': '1'
+      }
     });
 
-  // Round-1 body returned 189KB — inspect what it actually contains
-  await post('round-1 body (types event + cities filter)', {
-    q: '', types: ['event'], filter: { cities: [{ id: 'new-york' }] }
-  });
-
-  await post('tag browse: music gigs new york', {
-    tag: 'music:gig', city: { perm_name: 'new_york' }
-  });
-
-  await post('q + city string', { q: 'gigs', city: 'new_york' });
-
-  await post('browse-style: empty q with city perm_name', {
-    q: '', city: { perm_name: 'new_york', country_code: 'US' }
-  });
-
-  // Widget/partner-style endpoints
-  await tryReq('events api (api.dice.fm/events geo)', 'https://api.dice.fm/events?page[size]=12&filter[geo][lat]=40.7128&filter[geo][lng]=-74.006&filter[radius]=10km');
-  await tryReq('events api v2', 'https://api.dice.fm/v2/events?page[size]=12&filter[cities][]=new-york');
-  await tryReq('web api discovery', 'https://dice.fm/api/browse/new-york');
-  await tryReq('web api city events', 'https://dice.fm/api/v1/cities/new-york/events');
-
-  console.log('\n=== PROBE DONE ===');
+  console.log('\n\n=== KEYLESS ALTERNATIVES FOR LIVE BANDS ===');
+  await probe('bowerypresents shows', 'https://www.bowerypresents.com/shows');
+  await probe('elsewhere calendar', 'https://www.elsewherebrooklyn.com/calendar');
+  await probe('babys all right', 'https://babysallright.com/calendar/');
+  await probe('le poisson rouge', 'https://lpr.com/calendar/');
+  await probe('brooklyn steel (bowery net)', 'https://www.brooklynsteel.com/shows/brooklyn-steel');
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch(err => {
+  console.error('probe fatal:', err);
+  process.exit(1);
+});

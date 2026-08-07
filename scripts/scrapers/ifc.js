@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const { pickImage } = require('./lib/pick-image');
 
 async function scrape() {
   try {
@@ -48,6 +49,8 @@ async function scrape() {
       
       const url = href.startsWith('http') ? href : `https://www.ifccenter.com${href}`;
       
+      const image = pickImage($, $el, 'https://www.ifccenter.com');
+
       events.push({
         name: title,
         artists: [],
@@ -57,6 +60,7 @@ async function scrape() {
         time,
         url,
         source: 'ifc',
+        image,
         genre: 'film',
         subGenre: '',
         type: 'film',

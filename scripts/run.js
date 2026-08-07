@@ -19,6 +19,11 @@ async function main() {
     { name: 'ifc', mod: require('./scrapers/ifc') },
     { name: 'anthology', mod: require('./scrapers/anthology') },
     { name: 'nitehawk', mod: require('./scrapers/nitehawk') },
+    // Screen Slate: listings are client-rendered. /listings returns a ~22KB
+    // shell whose only content-ish class is "path-listings", and /api/listings
+    // 404s, so there is nothing for cheerio to read (checked 2026-08-07).
+    // Scraper kept in scrapers/screenslate.js for when an endpoint turns up.
+    // { name: 'screenslate', mod: require('./scrapers/screenslate') },
     { name: 'theskint', mod: require('./scrapers/theskint') },
     // Oh My Rockness: API domain gone, site bot-blocked (checked 2026-07)
     // { name: 'ohmyrockness', mod: require('./scrapers/ohmyrockness') },
@@ -30,6 +35,11 @@ async function main() {
     scrapers.push({ name: 'ticketmaster', mod: require('./scrapers/ticketmaster') });
   } else {
     console.log('(ticketmaster skipped — set TICKETMASTER_API_KEY to enable)');
+  }
+  if (process.env.SEATGEEK_CLIENT_ID) {
+    scrapers.push({ name: 'seatgeek', mod: require('./scrapers/seatgeek') });
+  } else {
+    console.log('(seatgeek skipped — set SEATGEEK_CLIENT_ID to enable)');
   }
   if (process.env.BANDSINTOWN_APP_ID) {
     scrapers.push({ name: 'bandsintown', mod: require('./scrapers/bandsintown') });

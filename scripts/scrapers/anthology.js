@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const { pickImage } = require('./lib/pick-image');
 
 async function scrape() {
   try {
@@ -61,6 +62,8 @@ async function scrape() {
         // Skip dupes (same title + date)
         if (events.some(e => e.name === title && e.date === currentDate && e.time === time)) return;
         
+        const image = pickImage($, $el, 'https://anthologyfilmarchives.org');
+
         events.push({
           name: title,
           artists: [],
@@ -70,6 +73,7 @@ async function scrape() {
           time,
           url: `https://anthologyfilmarchives.org${$el.attr('href') || ''}`,
           source: 'anthology',
+          image,
           genre: 'film',
           subGenre: 'experimental',
           type: 'film',

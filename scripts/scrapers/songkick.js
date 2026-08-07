@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 const BASE_URL = 'https://www.songkick.com/metro-areas/7644-us-new-york';
-const MAX_PAGES = 6; // 50 per page = ~300 events
+const MAX_PAGES = 4; // page 4 reliably 406s; 3 pages = 150 events is the ceiling
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -25,15 +25,18 @@ async function scrape() {
       
       let res = await fetch(url, { headers: HEADERS });
 
-      if (!res.ok && page === 1) {
-        // First page must succeed — retry once after a pause before giving up
-        console.warn(`[songkick] Page 1: HTTP ${res.status}, retrying in 5s...`);
+      // Page 4 answers 406 regardless of pacing: backing off 5s and then 12s
+      // was measured to make no difference, so 150 events (3 pages) is a hard
+      // pagination ceiling, not rate limiting. One retry is kept as cheap
+      // insurance against a transient blip; a second would just burn build time.
+      if (!res.ok) {
+        console.warn(`[songkick] Page ${page}: HTTP ${res.status}, retrying once in 5s...`);
         await sleep(5000);
         res = await fetch(url, { headers: HEADERS });
       }
 
       if (!res.ok) {
-        console.warn(`[songkick] Page ${page}: HTTP ${res.status}, stopping (keeping ${allEvents.length} events)`);
+        console.warn(`[songkick] Page ${page}: HTTP ${res.status} after retries, stopping (keeping ${allEvents.length} events)`);
         break;
       }
       
@@ -92,7 +95,7 @@ async function scrape() {
       console.log(`[songkick] Page ${page}: ${jsonLdBlocks.length} events (${allEvents.length} total)`);
       
       if (jsonLdBlocks.length < 50) break; // last page
-      await sleep(1500);
+      await sleep(2500);
     }
     
     console.log(`[songkick] Done. Found ${allEvents.length} NYC events`);

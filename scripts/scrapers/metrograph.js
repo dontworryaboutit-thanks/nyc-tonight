@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const { pickImage } = require('./lib/pick-image');
 
 async function scrape() {
   try {
@@ -59,6 +60,8 @@ async function scrape() {
       
       const url = href.startsWith('http') ? href : `https://metrograph.com${href}`;
       
+      const image = pickImage($, $block, 'https://metrograph.com');
+
       events.push({
         name: title,
         artists: [],
@@ -68,6 +71,7 @@ async function scrape() {
         time: '',
         url,
         source: 'metrograph',
+        image,
         genre: 'film',
         subGenre: year ? (parseInt(year) < 2000 ? 'classic' : '') : '',
         type: 'film',
