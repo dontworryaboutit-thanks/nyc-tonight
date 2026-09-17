@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sep 20–29 — NYC Tonight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { color-scheme: light dark; }
+
+    [data-theme="light"] {
+      --bg: #f1ead9;
+      --bg-card: #f8f2e5;
+      --bg-card-hover: #f3ebd7;
+      --bg-inset: #eae0c9;
+      --border: #ddd0b3;
+      --border-soft: #e7dcc2;
+      --text: #4a4130;
+      --text-dim: #948a70;
+      --text-bright: #2a2318;
+      --accent: #b75b32;
+      --accent-glow: rgba(183, 91, 50, 0.10);
+      --teal: #5b8770;
+      --teal-dim: rgba(91, 135, 112, 0.11);
+      --gold: #a07d2e;
+      --gold-bg: rgba(160, 125, 46, 0.10);
+      --silver: #857a68;
+      --silver-bg: rgba(133, 122, 104, 0.10);
+      --bronze: #8c5a34;
+      --bronze-bg: rgba(140, 90, 52, 0.10);
+      --film: #7c5c72;
+      --film-bg: rgba(124, 92, 114, 0.10);
+      --shadow: 0 2px 10px rgba(80, 60, 30, 0.06);
+    }
+    [data-theme="dark"] {
+      --bg: #1c1712;
+      --bg-card: #251f17;
+      --bg-card-hover: #2d261c;
+      --bg-inset: #221c15;
+      --border: #3b3223;
+      --border-soft: #2f2921;
+      --text: #d9cfbb;
+      --text-dim: #948a72;
+      --text-bright: #f3ecdc;
+      --accent: #e08a5b;
+      --accent-glow: rgba(224, 138, 91, 0.16);
+      --teal: #83ad95;
+      --teal-dim: rgba(131, 173, 149, 0.14);
+      --gold: #d1a868;
+      --gold-bg: rgba(209, 168, 104, 0.13);
+      --silver: #a79c87;
+      --silver-bg: rgba(167, 156, 135, 0.12);
+      --bronze: #b9865a;
+      --bronze-bg: rgba(185, 134, 90, 0.13);
+      --film: #a487a0;
+      --film-bg: rgba(164, 135, 160, 0.14);
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .serif { font-family: 'Fraunces', Georgia, serif; }
+
+    /* === PIN gate (shared session with the main dashboard) === */
+    #pin-gate {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1.5rem;
+      z-index: 1000;
+    }
+    #pin-gate .logo {
+      font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); font-weight: 500;
+    }
+    #pin-gate h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 2.1rem; font-weight: 400; color: var(--text-bright);
+      letter-spacing: -0.01em; text-align: center;
+    }
+    #pin-gate h1 em { font-style: inherit; color: inherit; }
+    #pin-gate input {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-bright); font-family: 'DM Mono', monospace;
+      font-size: 1.6rem; text-align: center; letter-spacing: 0.5em;
+      padding: 0.7rem 1.4rem; width: 10rem; border-radius: 6px; outline: none;
+      transition: border-color 0.2s;
+    }
+    #pin-gate input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    #pin-gate .error { color: #a8453a; font-size: 0.8rem; min-height: 1em; }
+    #pin-gate.hidden { display: none; }
+
+    /* === Header === */
+    header {
+      padding: 2.25rem 2rem 0.75rem;
+      max-width: 720px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .brand h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.6rem; font-weight: 500; color: var(--text-bright);
+      letter-spacing: -0.01em;
+    }
+    .brand h1 span { color: inherit; font-weight: inherit; font-style: inherit; }
+    .brand .tagline { color: var(--text-dim); font-size: 0.78rem; margin-top: 0.2rem; }
+    .brand .tagline a { color: var(--teal); text-decoration: none; }
+    .brand .tagline a:hover { text-decoration: underline; }
+    .theme-toggle {
+      background: transparent; border: 1px solid var(--border); border-radius: 50%;
+      width: 2rem; height: 2rem; cursor: pointer; font-size: 0.9rem;
+      color: var(--text); display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+
+    main { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+    .lede {
+      padding: 1.8rem 0 0.5rem;
+      max-width: 58ch;
+      font-size: 0.98rem;
+    }
+    .lede p { margin: 0 0 0.8rem; }
+    .lede .note { color: var(--text-dim); font-size: 0.84rem; }
+
+    .pagetitle {
+      font-family: 'Fraunces', Georgia, serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+      color: var(--text-bright);
+      margin-top: 1.6rem;
+      text-wrap: balance;
+    }
+
+    /* === Jump nav === */
+    .jump {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 0.5rem 0.9rem;
+      padding: 1.4rem 0 1.8rem;
+      font-size: 0.82rem;
+    }
+    .jump a {
+      color: var(--text-dim); text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .jump a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    .jump .sep { color: var(--border); }
+    .jump .gap { font-style: italic; color: var(--dim, var(--text-dim)); opacity: .7; }
+
+    /* === Day sections === */
+    .day-header {
+      display: flex; align-items: baseline; gap: 0.7rem;
+      padding: 1.9rem 0 0.5rem;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 0.8rem;
+      scroll-margin-top: 1.5rem;
+    }
+    .day-header .day-date {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.5rem; font-weight: 500; color: var(--accent);
+    }
+    .day-header .day-name {
+      font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-dim); font-weight: 500;
+    }
+    .day-header .day-flag {
+      font-size: 0.78rem; color: var(--text-dim); font-style: italic;
+      margin-left: auto; text-align: right;
+    }
+    .day-vibe { color: var(--text-dim); font-size: 0.9rem; margin: -0.35rem 0 1rem; max-width: 56ch; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 0.6rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 0.9rem;
+    }
+    .card .when {
+      font-size: 0.76rem; color: var(--text-dim);
+      padding-top: 0.2rem;
+    }
+    .card .rank {
+      display: block;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.15rem; color: var(--accent);
+      margin-bottom: 0.15rem; line-height: 1;
+    }
+    .card h3 { font-size: 1.04rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.2rem; }
+    .card .venue { font-size: 0.82rem; font-weight: 500; color: var(--teal); margin-bottom: 0.4rem; }
+    .card p { font-size: 0.89rem; margin-bottom: 0.4rem; }
+    .card .tip { font-size: 0.8rem; color: var(--text-dim); font-style: italic; }
+    .tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+    .tag {
+      font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 0.12rem 0.55rem; border-radius: 20px;
+      background: var(--bg-inset); color: var(--text-dim);
+    }
+    .tag.jazz { background: var(--teal-dim); color: var(--teal); }
+    .tag.rare { background: var(--gold-bg); color: var(--gold); }
+    .tag.classical { background: var(--film-bg); color: var(--film); }
+    .tag.sport { background: var(--silver-bg); color: var(--silver); }
+    .tag.festival { background: var(--bronze-bg); color: var(--bronze); }
+    .tag.theatre { background: var(--film-bg); color: var(--film); }
+
+    .gapnote {
+      padding: 1rem 0 1.8rem;
+      color: var(--text-dim); font-size: 0.85rem; font-style: italic;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 0.8rem;
+    }
+
+    footer {
+      max-width: 720px; margin: 0 auto;
+      padding: 1.8rem 2rem 3rem;
+      color: var(--text-dim); font-size: 0.8rem;
+    }
+    footer p { margin-bottom: 0.7rem; max-width: 58ch; }
+    footer a { color: var(--teal); }
+
+    @media (max-width: 600px) {
+      .card { grid-template-columns: 46px 1fr; }
+      header, main, footer { padding-left: 1.1rem; padding-right: 1.1rem; }
+    }
+
+    /* === Additions for the Sep 20–29 guide === */
+    .card h3 a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--border); }
+    .card h3 a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .headline {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.35rem;
+      margin: 0.4rem 0 1.4rem;
+    }
+    .headline h3 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.05rem; font-weight: 500; color: var(--text-bright);
+      margin-bottom: 0.7rem;
+    }
+    .headline ol { margin: 0; padding-left: 1.15rem; }
+    .headline li { font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .headline li:last-child { margin-bottom: 0; }
+    .headline b { color: var(--text-bright); }
+    .headline .where { color: var(--teal); font-weight: 500; }
+
+    .tag.film { background: var(--film-bg); color: var(--film); }
+    .tag.ambient { background: var(--silver-bg); color: var(--silver); }
+    .tag.club { background: var(--bronze-bg); color: var(--bronze); }
+  </style>
+</head>
+<body>
+
+  <div id="pin-gate">
+    <div class="logo">nyc tonight</div>
+    <h1>Sunday to the <em>29th</em></h1>
+    <input type="password" id="pin-input" maxlength="4" placeholder="· · · ·" autofocus>
+    <div class="error" id="pin-error"></div>
+  </div>
+
+  <div id="app" style="display:none">
+    <header>
+      <div class="brand">
+        <h1>NYC <span>Tonight</span></h1>
+        <div class="tagline"><a href="index.html">← all events</a></div>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☾</button>
+    </header>
+
+    <main>
+      <h2 class="pagetitle">Ten days, Sep 20–29.</h2>
+      <div class="lede">
+        <p>Sunday through the 29th, filtered hard. Everything below comes out of the dashboard's own scrape — club calendars, Resident Advisor, Metrograph, Songkick — then re-ranked by hand against the taste profile rather than by the scorer, which keeps rewarding the word &ldquo;Mike.&rdquo;</p>
+        <p>Two things make this window unusually good. <b>John Coltrane turns 100 on Wednesday the 23rd</b>, and Dizzy's is running a six-night centennial. And there's an accidental <b>Ryuichi Sakamoto weekend</b> — a piano program in an Episcopal church on the 25th, then both Sakamoto documentaries at Metrograph on the 26th and 27th.</p>
+        <p class="note">Built from the last clean scrape (Sep 16). Metrograph's calendar only runs through the 27th, so the 28th–29th have no film listings yet. Village Vanguard, Roulette, The Stone, Issue Project Room, Film Forum and Anthology aren't in the feed with usable dates — worth a manual look before you lock a night.</p>
+      </div>
+
+      <div class="headline">
+        <h3>If you only do five things</h3>
+        <ol>
+          <li><b>A Winged Victory for the Sullen</b> — <span class="where">Pioneer Works, Mon 28 &amp; Tue 29</span>. Stars of the Lid's Adam Wiltzie and composer Dustin O'Halloran, strings and tape hiss, in a converted Red Hook ironworks. Pan•American opens. Two nights, so it's the easiest thing here to schedule.</li>
+          <li><b>Coltrane Centennial</b> — <span class="where">Dizzy's Club, Tue 22 – Sun 27</span>. Six different bands over six nights. The 23rd is the actual hundredth birthday.</li>
+          <li><b>The Sakamoto run</b> — <span class="where">St. Bartholomew's Fri 25, Metrograph Sat 26 &amp; Sun 27</span>. Piano program, then <em>Diaries</em>, then <em>Opus</em>. Doing all three is the best three-day arc in this window.</li>
+          <li><b>Alabaster DePlume</b> — <span class="where">The Rooftop at Elsewhere, Tue 22</span>. Spiritual-jazz saxophone and spoken word, outdoors, on a roof, probably the last warm week for it.</li>
+          <li><b>Yi Yi</b> — <span class="where">Metrograph, Sun 20, 5:30pm</span>. Edward Yang on DCP, three hours, and the retrospective continues with <em>A Brighter Summer Day</em> on Monday.</li>
+        </ol>
+      </div>
+
+      <nav class="jump">
+        <a href="#d20">Sun 20</a><span class="sep">·</span>
+        <a href="#d21">Mon 21</a><span class="sep">·</span>
+        <a href="#d22">Tue 22</a><span class="sep">·</span>
+        <a href="#d23">Wed 23</a><span class="sep">·</span>
+        <a href="#d24">Thu 24</a><span class="sep">·</span>
+        <a href="#d25">Fri 25</a><span class="sep">·</span>
+        <a href="#d26">Sat 26</a><span class="sep">·</span>
+        <a href="#d27">Sun 27</a><span class="sep">·</span>
+        <a href="#d28">Mon 28</a><span class="sep">·</span>
+        <a href="#d29">Tue 29</a>
+      </nav>
+
+      <!-- SEP 20 -->
+      <div class="day-header" id="d20">
+        <span class="day-date">Sep 20</span>
+        <span class="day-name">Sunday</span>
+      </div>
+      <p class="day-vibe">A film day with a dub tail. Two Taiwanese masters at Metrograph, and two separate parties built around echo and sound-system listening.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>5:30pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span><span class="tag rare">retrospective</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999001293"><em>Yi Yi</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Edward Yang, 2000, 173 min, DCP. A family in Taipei seen from three generations at once — the one film that would justify the whole week on its own. Part of a Yang retrospective that runs into next week.</p>
+          <p class="tip">Three hours with no intermission. Eat first.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>4pm</div>
+        <div>
+          <div class="tags"><span class="tag club">dub</span></div>
+          <h3><a href="https://ra.co/events/2534530">World of Echoes — François K with Greg Wilson</a></h3>
+          <div class="venue">Le Bain</div>
+          <p>François Kevorkian running his dub/echo programme in daylight. Forty years of Deep Space pedigree, and the rare case of a rooftop party that's actually about the sound.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>10pm</div>
+        <div>
+          <div class="tags"><span class="tag">soul</span></div>
+          <h3><a href="https://donyc.com/events/2026/9/20/nai-palm-of-hiatus-kaiyote-tickets">Nai Palm (of Hiatus Kaiyote)</a></h3>
+          <div class="venue">Baby's All Right</div>
+          <p>Solo, in a 280-cap room. Her voice and guitar without the band around it is a genuinely different thing from Hiatus Kaiyote.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>8:45pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999004997"><em>Stray Dogs</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Tsai Ming-liang, 2013. Metrograph is running a Tsai strand alongside the Yang films — <em>Rebels of the Neon God</em> and <em>Goodbye, Dragon Inn</em> land later in the week.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">5</span>5pm / 7:30pm</div>
+        <div>
+          <div class="tags"><span class="tag ambient">listening</span></div>
+          <h3><a href="https://ra.co/events/2537054">Deep Listening</a> at Moondog Hifi · <a href="https://ra.co/events/2527552">Artifact</a> at Sleepwalk</h3>
+          <div class="venue">Moondog Hifi / Sleepwalk</div>
+          <p>Two small-room bets: a dub sound-system listening session, and an experimental-music series night. Both cheap, both the kind of thing that's either the best night of the month or nothing.</p>
+        </div>
+      </div>
+
+      <!-- SEP 21 -->
+      <div class="day-header" id="d21">
+        <span class="day-date">Sep 21</span>
+        <span class="day-name">Monday</span>
+      </div>
+      <p class="day-vibe">The big one is a four-hour Edward Yang in the afternoon. If you'd rather be out at night, Elsewhere has ambient and Brooklyn Steel has French pop weirdness.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>3pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span><span class="tag rare">rare</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999002246"><em>A Brighter Summer Day</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Yang, 1991, 237 min, DCP. Taipei street gangs, martial law and American pop culture. It essentially never screens — this is the one to move things around for.</p>
+          <p class="tip">Nearly four hours on a Monday afternoon. Plan the day around it or skip it.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag ambient">ambient</span></div>
+          <h3><a href="https://donyc.com/events/2026/9/21/green-house-tickets">Green-House</a></h3>
+          <div class="venue">Elsewhere</div>
+          <p>Olive Ardizoni's synth music written for plants — new-age framing, but the records are careful, and it should land well in a small room.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>5:15pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999004969"><em>Days and Nights in the Forest</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Satyajit Ray, 1970. Four men from Calcutta go to the country and slowly come apart. Pairs neatly with the Yang if you want a full day of it.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag">pop</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43238528-sebastien-tellier-at-brooklyn-steel">Sébastien Tellier</a></h3>
+          <div class="venue">Brooklyn Steel</div>
+          <p>The <em>Kiss the Beast</em> tour. Rarely over here, and the live show is a lot more of a production than the records suggest.</p>
+        </div>
+      </div>
+
+      <!-- SEP 22 -->
+      <div class="day-header" id="d22">
+        <span class="day-date">Sep 22</span>
+        <span class="day-name">Tuesday</span>
+      </div>
+      <p class="day-vibe">The Coltrane week opens at Dizzy's, and Alabaster DePlume plays a roof. Strong afternoon at Metrograph too — Sciamma, Bresson and Cocteau within three hours of each other.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span><span class="tag rare">rare</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43294989-alabaster-deplume-at-rooftop-elsewhere">Alabaster DePlume</a>, with Tara Lily</h3>
+          <div class="venue">The Rooftop, Elsewhere</div>
+          <p>Saxophone, spoken word and a sort of insistent gentleness — genre-fluid in the way the profile keeps asking for, and he directs a room rather than performing at it. Outdoors, late September, which is its own argument.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Coltrane Centennial: Roxy Coss Quartet</a></h3>
+          <div class="venue">Dizzy's Club</div>
+          <p>Night one of six. Glass wall over Columbus Circle, small room, and a different band every night through Sunday.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>2pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999004050"><em>Petite Maman</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Sciamma, 2021, 72 minutes. The smallest of her films and arguably the most precise. <em>L'Argent</em> (Bresson) follows at 3:40, <em>Orpheus</em> (Cocteau) at 4:20.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://ra.co/events/2524685">Free Spirits: Kiana Mickles presents Mary Lou Williams</a></h3>
+          <div class="venue">Silence Please</div>
+          <p>A listening-and-talk night on one of the most under-told figures in the music. Cheap, tiny, and the right kind of deep dive.</p>
+        </div>
+      </div>
+
+      <!-- SEP 23 -->
+      <div class="day-header" id="d23">
+        <span class="day-date">Sep 23</span>
+        <span class="day-name">Wednesday</span>
+        <span class="day-flag">Coltrane's 100th birthday</span>
+      </div>
+      <p class="day-vibe">The densest night of the ten. Coltrane centenary proper, Dopplereffekt playing live, three pianists at LPR, Rosenwinkel in a small room, and Wong Kar-wai in the afternoon.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span><span class="tag rare">one night</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Coltrane Centennial: Ron Blake Quintet</a></h3>
+          <div class="venue">Dizzy's Club</div>
+          <p>John Coltrane was born September 23, 1926. This is the night. If you pick one evening out of the whole ten days on principle, pick this one.</p>
+          <p class="tip">Book now — the centenary date will go before the rest of the run.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag">electronic</span><span class="tag rare">live sets</span></div>
+          <h3><a href="https://ra.co/events/2485135">Daniel Avery (live) + Dopplereffekt (live)</a></h3>
+          <div class="venue">Elsewhere</div>
+          <p>Dopplereffekt — Drexciya's Gerald Donald — playing live is the draw: cold Detroit electro built around science and taxonomy, performed maybe once a year on this continent.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>7:30pm</div>
+        <div>
+          <div class="tags"><span class="tag classical">contemporary</span></div>
+          <h3><a href="https://donyc.com/events/2026/9/23/pianofortepianoforte-pianists-ethan-iverson-beth-levin-and-kathleen-supove-the-heart-of-the-matter-tickets">pianoFORTE: Ethan Iverson, Beth Levin, Kathleen Supové</a></h3>
+          <div class="venue">Le Poisson Rouge</div>
+          <p>Iverson (The Bad Plus) alongside two pianists who live on the contemporary-classical side. Exactly the tradition-versus-experiment tension the profile keeps circling.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>2pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999000497"><em>Happy Together</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Wong Kar-wai, 1997, Buenos Aires. Later: <em>The Night is Short, Walk on Girl</em> (Yuasa) at 9:35.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">5</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://thepocketnyc.com/">Gideon King &amp; City Blog feat. Kurt Rosenwinkel</a></h3>
+          <div class="venue">The Pocket Jazz Club</div>
+          <p>Rosenwinkel as a sideman in a tiny club is an odd, good deal — he normally plays much bigger rooms than this.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">6</span>10pm</div>
+        <div>
+          <div class="tags"><span class="tag club">footwork</span></div>
+          <h3><a href="https://ra.co/events/2523931">HEADCRACK: DJ Manny (Teklife)</a></h3>
+          <div class="venue">Bossa Nova Civic Club</div>
+          <p>Teklife footwork in the sweatiest small room in Bushwick. Rhythmically complex, emotionally direct — the late option if the Coltrane set ends early.</p>
+        </div>
+      </div>
+
+      <!-- SEP 24 -->
+      <div class="day-header" id="d24">
+        <span class="day-date">Sep 24</span>
+        <span class="day-name">Thursday</span>
+      </div>
+      <p class="day-vibe">múm in the round at LPR is the night. Metrograph has an unusually good afternoon slate — Antonioni, Tati and Gilliam back to back.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag">electronic</span><span class="tag rare">staging</span></div>
+          <h3><a href="https://donyc.com/events/2026/9/24/mum-in-the-round-tickets-5lkxb1r">múm — In the Round</a>, with Christopher Tignor</h3>
+          <div class="venue">Le Poisson Rouge</div>
+          <p>Icelandic glitch-folk, playing in the middle of the floor with the audience around them. The in-the-round staging is the reason to go rather than a gimmick — their music is quiet enough that the room shape matters.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Coltrane Centennial: Ron Blake Sextet</a></h3>
+          <div class="venue">Dizzy's Club</div>
+          <p>Same leader as Wednesday, expanded to six. The bigger band suits the later Coltrane material.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>4:20 / 4:25 / 7pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999004957"><em>La Notte</em></a> · <a href="https://metrograph.com/film/?vista_film_id=9999001700"><em>Playtime</em></a> · <a href="https://metrograph.com/film/?vista_film_id=9999000356"><em>Brazil</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Antonioni at 4:20, Tati at 4:25, Gilliam at 7. Three different answers to the same question about cities and the people stuck inside them. You can only get two of them.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://donyc.com/events/2026/9/24/domi-jd-beck-who-asked-tour-tickets">DOMi &amp; JD Beck</a></h3>
+          <div class="venue">Sony Hall</div>
+          <p>Absurd technical fluency, keys and drums only. Also playing Saturday the 26th if Thursday's taken.</p>
+        </div>
+      </div>
+
+      <!-- SEP 25 -->
+      <div class="day-header" id="d25">
+        <span class="day-date">Sep 25</span>
+        <span class="day-name">Friday</span>
+        <span class="day-flag">busiest night of the ten</span>
+      </div>
+      <p class="day-vibe">Sakamoto in a church at 7, Basic Channel's Mark Ernestus at 11, Cabaret Voltaire in a Queens door factory, Armand Hammer downtown. Genuinely hard to choose.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag classical">piano</span><span class="tag rare">one night</span></div>
+          <h3><a href="https://ra.co/events/2533350">MEZAME Festival: <em>Light in Darkness</em> — the piano music of Ryuichi Sakamoto</a></h3>
+          <div class="venue">St. Bartholomew's Church</div>
+          <p>Sakamoto's piano writing in a Byzantine-revival church on Park Avenue, with the reverb that implies. First of three Sakamoto events in three days — see Saturday and Sunday.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>11pm</div>
+        <div>
+          <div class="tags"><span class="tag club">dub techno</span><span class="tag rare">rare</span></div>
+          <h3><a href="https://ra.co/events/2501261">Mark Ernestus, Umfang / DJ Python, No Sir / Carl Luis</a></h3>
+          <div class="venue">public records</div>
+          <p>Ernestus is half of Basic Channel and Rhythm &amp; Sound — the person most responsible for dub becoming techno. He plays here almost never, and public records is the one room in the city built to carry that low end properly.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>6:30pm</div>
+        <div>
+          <div class="tags"><span class="tag">industrial</span><span class="tag rare">rare</span></div>
+          <h3><a href="https://ra.co/events/2452700">Cabaret Voltaire</a> (LPR presents)</h3>
+          <div class="venue">Knockdown Center</div>
+          <p>Sheffield, 1973, and the line from them to most of what else is on this page is short. Richard H. Kirk's project continues under Chris Watson and Stephen Mallinder — early enough that you could still do public records after.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>evening</div>
+        <div>
+          <div class="tags"><span class="tag">hip hop</span></div>
+          <h3><a href="https://ra.co/events/2398325">Armand Hammer</a></h3>
+          <div class="venue">Racket NY</div>
+          <p>billy woods and ELUCID — the most literary rap group working, dense enough to reward the same attention you'd give a novel.</p>
+          <p class="tip">The feed's start time for this one is clearly wrong; check the listing.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">5</span>7pm / 10:30pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Coltrane Centennial: Camille Thurman Quintet</a> · <a href="https://ra.co/events/2470640">Takuya Nakamura: Cosmic Jungle</a></h3>
+          <div class="venue">Dizzy's Club / Elsewhere</div>
+          <p>Thurman plays tenor and sings, which makes her the most interesting booking of the Coltrane run. Nakamura's night is jazz-electronic crossover with a rotating cast.</p>
+        </div>
+      </div>
+
+      <!-- SEP 26 -->
+      <div class="day-header" id="d26">
+        <span class="day-date">Sep 26</span>
+        <span class="day-name">Saturday</span>
+      </div>
+      <p class="day-vibe">Flying Lotus with a stacked undercard in Queens, Sakamoto documentary number one, and Moodymann on a roof in the afternoon.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>6:30pm</div>
+        <div>
+          <div class="tags"><span class="tag">electronic</span><span class="tag rare">lineup</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43324517-flying-lotus-at-knockdown-center">Flying Lotus</a>, with Olof Dreijer, Black Dice, Carrier</h3>
+          <div class="venue">Knockdown Center</div>
+          <p>The undercard is the story: Olof Dreijer of The Knife and Black Dice on the same bill. FlyLo's live show sits exactly on the jazz/electronic/hip-hop seam.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>5:45pm</div>
+        <div>
+          <div class="tags"><span class="tag film">documentary</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999005007"><em>Ryuichi Sakamoto: Diaries</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Takeo Omori, 2025. The middle panel of the Sakamoto triptych — church on Friday, this on Saturday, <em>Opus</em> on Sunday.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>4pm</div>
+        <div>
+          <div class="tags"><span class="tag club">house</span></div>
+          <h3><a href="https://ra.co/events/2506360">Moodymann — LoHi Rooftop</a></h3>
+          <div class="venue">314 Scholes</div>
+          <p>Kenny Dixon Jr. in daylight. Detroit house played off records, heavy on soul and disco sources — and he does not do this often in New York.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">brass</span></div>
+          <h3><a href="https://www.bluenotejazz.com/nyc/">Hypnotic Brass Ensemble</a></h3>
+          <div class="venue">Blue Note</div>
+          <p>Eight sons of Phil Cohran, Sun Ra Arkestra alumnus. Afrobeat, jazz and hip-hop played entirely on horns, in a room far too small for it.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">5</span>11:20pm</div>
+        <div>
+          <div class="tags"><span class="tag film">35mm</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999002029"><em>Paprika</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Satoshi Kon, 2006, on 35mm — the print is the point. Screens again Sunday at 10:15pm.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">6</span>3pm / 11pm</div>
+        <div>
+          <div class="tags"><span class="tag club">house</span></div>
+          <h3><a href="https://ra.co/events/2453711">ReSolute x Yoyaku</a> · <a href="https://ra.co/events/2525053">DJ Assault residency</a></h3>
+          <div class="venue">H0L0 / Market Hotel</div>
+          <p>Chez Damier and Satoshi Tomiie on an all-day bill at H0L0; Detroit ghettotech at Market Hotel if you want the night to end badly in the good way.</p>
+        </div>
+      </div>
+
+      <!-- SEP 27 -->
+      <div class="day-header" id="d27">
+        <span class="day-date">Sep 27</span>
+        <span class="day-name">Sunday</span>
+      </div>
+      <p class="day-vibe">The best-programmed single day of the ten, and almost all of it at Metrograph. Then the Coltrane run closes, and MEZAME turns the church into a club at 11.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>5:15pm</div>
+        <div>
+          <div class="tags"><span class="tag film">documentary</span><span class="tag rare">rare</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999005011"><em>Ryuichi Sakamoto | Opus</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Neo Sora, 2023 — Sakamoto's final performance, filmed by his son, twenty pieces in black and white, no audience. The closing panel of the three-day run and the one that justifies the other two.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>11am</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999000006"><em>Goodbye, Dragon Inn</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Tsai Ming-liang, 2003 — a dying movie palace on its last night, watched in a movie palace. Eighty-two minutes, barely any dialogue, and the closest thing to a perfect Sunday-morning screening this month.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>11pm</div>
+        <div>
+          <div class="tags"><span class="tag club">ambient / club</span><span class="tag rare">setting</span></div>
+          <h3><a href="https://ra.co/events/2534457">MEZAME: Loidis (Huerco S.), Crystallmess, Terekke, Yu Su</a></h3>
+          <div class="venue">St. Bartholomew's Church</div>
+          <p>Brian Leeds as Loidis, plus Crystallmess, Terekke and Yu Su — four of the most interesting people working the ambient/club boundary, in a church at midnight. The single strangest booking in the window.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">4</span>3pm / 8pm</div>
+        <div>
+          <div class="tags"><span class="tag film">film</span></div>
+          <h3><a href="https://metrograph.com/film/?vista_film_id=9999005010"><em>Faat Kiné</em></a> · <a href="https://metrograph.com/film/?vista_film_id=9999000422"><em>Morvern Callar</em></a></h3>
+          <div class="venue">Metrograph</div>
+          <p>Ousmane Sembène's Dakar comedy at 3 (Jollof Films presents), Lynne Ramsay's grief-and-techno film at 8 (Fireflies Press). Both with presenters, both rare.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">5</span>5pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Coltrane Centennial: Wayne Escoffery Quartet</a></h3>
+          <div class="venue">Dizzy's Club</div>
+          <p>Closing night of the six, and an early one — 5pm, so it doesn't rule out the church at 11.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">6</span>3pm</div>
+        <div>
+          <div class="tags"><span class="tag club">house</span></div>
+          <h3><a href="https://ra.co/events/2533835">Shelter: Timmy Regisford open to close</a> · <a href="https://ra.co/events/2503322">Mister Sunday: Cassy</a></h3>
+          <div class="venue">public records / Nowadays</div>
+          <p>Two daytime institutions running head to head. Regisford has been doing Shelter since 1990; Mister Sunday is the outdoor one.</p>
+        </div>
+      </div>
+
+      <!-- SEP 28 -->
+      <div class="day-header" id="d28">
+        <span class="day-date">Sep 28</span>
+        <span class="day-name">Monday</span>
+      </div>
+      <p class="day-vibe">Pioneer Works, night one. Metrograph hasn't published this far out yet, so film listings for the 28th and 29th are still to come.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag ambient">ambient</span><span class="tag rare">two nights</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43230698-a-winged-victory-for-the-sullen-at-pioneer-works">A Winged Victory for the Sullen</a>, with Pan•American</h3>
+          <div class="venue">Pioneer Works</div>
+          <p>Adam Wiltzie (Stars of the Lid) and Dustin O'Halloran, strings and tape and very long decays, under the skylights of a converted Red Hook ironworks. Pan•American — Mark Nelson of Labradford — opens, which is an unusually well-matched pairing.</p>
+          <p class="tip">Also Tuesday. Pioneer Works shows sell steadily rather than instantly, but two nights means no excuse.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag">indie</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43336885-half-waif-at-public-records">Half Waif</a></h3>
+          <div class="venue">public records</div>
+          <p>Nandi Rose's synth-and-voice project, in the sound room. Quiet, precise, and the room rewards that.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Joe Block Quintet — <em>There Is Always Hope</em> release</a></h3>
+          <div class="venue">Dizzy's Club</div>
+        </div>
+      </div>
+
+      <!-- SEP 29 -->
+      <div class="day-header" id="d29">
+        <span class="day-date">Sep 29</span>
+        <span class="day-name">Tuesday</span>
+      </div>
+      <p class="day-vibe">Last day. Either the second Pioneer Works night, or the one arena show in the window that's actually worth it.</p>
+
+      <div class="card">
+        <div class="when"><span class="rank">1</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag ambient">ambient</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43230772-a-winged-victory-for-the-sullen-at-pioneer-works">A Winged Victory for the Sullen</a> — night two</h3>
+          <div class="venue">Pioneer Works</div>
+          <p>Same bill as Monday. If the 28th is spoken for, this is the fallback that costs nothing.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">2</span>8pm</div>
+        <div>
+          <div class="tags"><span class="tag">arena</span></div>
+          <h3><a href="https://www.songkick.com/concerts/43082056-gorillaz-at-madison-square-garden">Gorillaz</a>, with Little Simz and Deltron 3030</h3>
+          <div class="venue">Madison Square Garden</div>
+          <p>The usual arena caveat applies, but the support is the argument: Little Simz, and Deltron 3030 — Del, Dan the Automator and Kid Koala — reassembled, which happens about once a decade.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="when"><span class="rank">3</span>7pm</div>
+        <div>
+          <div class="tags"><span class="tag jazz">jazz</span></div>
+          <h3><a href="https://www.jazz.org/dizzys/events/calendar/">Emmet Cohen &amp; Friends</a></h3>
+          <div class="venue">Dizzy's Club</div>
+          <p>YoungArts 45th anniversary celebration. Cohen is reliably the best hang in New York jazz.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p><b>What to book first:</b> Dizzy's on the 23rd (the actual centenary), the Sakamoto church program on the 25th, and Alabaster DePlume on the 22nd — all small rooms with one date. Pioneer Works has two nights and Metrograph rarely sells out mid-week, so those can wait.</p>
+      <p><b>Caveats.</b> Everything here comes from the dashboard's last clean scrape on Sep 16 — start times occasionally come through mangled (the Armand Hammer listing is visibly wrong), so confirm on the venue page before you travel. Metrograph's calendar stops on the 27th, so the last two days have no film picks yet. And the feed has no usable dated listings for Village Vanguard, Roulette, The Stone, Issue Project Room, National Sawdust, Film Forum or Anthology — several of the best rooms in the city are simply invisible here and are worth checking by hand.</p>
+      <p>See the <a href="index.html">full dashboard</a> for everything else, or the <a href="parents-visit.html">parents' visit guide</a>.</p>
+    </footer>
+  </div>
+
+  <script>
+    const PIN = '7429';
+
+    function initTheme() {
+      const saved = localStorage.getItem('nyc-tonight-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      updateThemeIcon(saved);
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('nyc-tonight-theme', next);
+      updateThemeIcon(next);
+    }
+    function updateThemeIcon(theme) {
+      const btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = theme === 'dark' ? '☀' : '☾';
+    }
+    initTheme();
+
+    const gate = document.getElementById('pin-gate');
+    const pinInput = document.getElementById('pin-input');
+    const pinError = document.getElementById('pin-error');
+
+    if (localStorage.getItem('nyc-tonight-auth') === 'ok') {
+      gate.classList.add('hidden');
+      document.getElementById('app').style.display = 'block';
+    }
+
+    pinInput.addEventListener('input', function() {
+      if (this.value.length === 4) {
+        if (this.value === PIN) {
+          localStorage.setItem('nyc-tonight-auth', 'ok');
+          gate.classList.add('hidden');
+          document.getElementById('app').style.display = 'block';
+        } else {
+          pinError.textContent = 'nope';
+          this.value = '';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

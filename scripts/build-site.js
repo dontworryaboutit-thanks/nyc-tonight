@@ -580,7 +580,7 @@ function buildSite(events, outputDir) {
     <header>
       <div class="brand">
         <h1>NYC <span>Tonight</span></h1>
-        <div class="tagline">events across the city, scored to your taste · <a href="parents-visit.html">parents' visit guide →</a></div>
+        <div class="tagline">events across the city, scored to your taste · <a href="week-sep-20-29.html">sep 20–29 picks →</a> · <a href="parents-visit.html">parents' visit guide →</a></div>
       </div>
       <div class="header-right">
         <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀</button>
